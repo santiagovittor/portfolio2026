@@ -1,9 +1,5 @@
-import AboutSection from "@/components/AboutSection";
+import AboutSection from "../../components/AboutSection";
 
-export const metadata = {
-  title: "About",
-};
-
-export default function Page() {
+export default function AboutPage() {
   return <AboutSection />;
 }

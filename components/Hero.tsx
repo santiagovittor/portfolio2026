@@ -1,37 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTheme } from "./ThemeProvider";
 import CornerGithub from "./CornerGithub";
-import Reveal from "./Reveal";
 
 export default function Hero() {
-  const [showName, setShowName] = useState(true);
+  const [swap, setSwap] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
-    const t = setTimeout(() => setShowName((v) => !v), 2500);
+    const t = setTimeout(() => setSwap((v) => !v), 2500);
     return () => clearTimeout(t);
-  }, [showName]);
+  }, [swap]);
 
   return (
-    <main className="min-h-[100vh] grid place-items-center text-center uppercase relative">
+    <div className={isDark ? "mainTextContainer__isDark" : "mainTextContainer"}>
       <CornerGithub />
 
-      <div className="grid gap-2">
-        <Reveal>
-          <h1 className="text-[1.7rem] md:text-7xl font-bold tracking-tight">
-            Hi, I am
-          </h1>
-        </Reveal>
+      <h1 data-aos="zoom-in" data-aos-duration="1500">
+        Hola, soy
+      </h1>
 
-        <Reveal>
-          <h1
-            key={showName ? "name" : "role"}
-            className="text-[1.7rem] md:text-7xl font-bold tracking-tight animate-heroSwap"
-          >
-            {showName ? "Santiago Vittor" : "Front End Developer"}
-          </h1>
-        </Reveal>
-      </div>
-    </main>
+      <h1 data-aos="zoom-out" data-aos-duration="1500">
+        {swap ? "Santiago Vittor" : "Desarrollador frontEnd"}
+      </h1>
+    </div>
   );
 }

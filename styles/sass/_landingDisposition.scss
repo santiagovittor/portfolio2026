@@ -1,0 +1,133 @@
+$black: #18191A;
+
+.landingDisposition {
+    width: 100%;
+    min-height: 100vh;
+    color: $black;
+    overflow-y: hidden;
+    display: grid;
+    font-family: "Rajdhani", sans-serif;
+    grid-template-columns: 6fr 1fr;
+    background-color: WHITE;
+    transition: 2s;
+    &__isDark {
+        width: 100%;
+        min-height: 100vh;
+        color: white;
+        overflow-y: hidden;
+        display: grid;
+        font-family: "Rajdhani", sans-serif;
+        grid-template-columns: 6fr 1fr;
+        background-color: $black;
+        transition: 2s;
+    }
+}
+
+.mainTextContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    place-content: center;
+    text-transform: uppercase;
+    text-align: center;
+    transition: 2s;
+    & h1 {
+        font-size: 5rem;
+    }
+    &__isDark {
+        display: grid;
+        place-content: center;
+        color: white;
+        font-family: "Rajdhani", sans-serif;
+        text-align: center;
+        text-transform: uppercase;
+        transition: 2s;
+        & h1 {
+            font-size: 5rem;
+        }
+    }
+}
+
+.cornerGithubContainer{
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 75px solid transparent;
+    border-top: 75px solid transparent;
+    border-left: 75px solid $black;
+    border-bottom: 75px solid $black;
+    transform: rotateZ(90deg);
+    place-content: center;
+    transition: 2s;
+    & img{
+        height: 4rem;
+        width: 4rem;
+        margin-left: -4rem;
+        transform: rotate(45deg);
+        transition: 2s;
+        opacity: 0.7;
+        &:hover{
+            transform: rotate(-45deg);
+            opacity: 1;
+            transition: 2s;
+        }
+    }
+    &__isDark{
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-right: 75px solid transparent;
+        border-top: 75px solid transparent;
+        border-left: 75px solid white;
+        border-bottom: 75px solid white;
+        transform: rotateZ(90deg);
+        place-content: center;
+        transition: 2s;
+        & img{
+            height: 4rem;
+            width: 4rem;
+            margin-left: -4rem;
+            transform: rotate(45deg);
+            opacity: 0.7;
+            transition: 2s;
+            &:hover{
+                transform: rotate(-45deg);
+                opacity: 1;
+                transition: 2s;
+            }
+        }
+    }
+}
+
+
+
+@media only screen and (max-width: 768px) {
+    .landingDisposition,.landingDisposition__isDark {
+        grid-template-columns: 1fr;
+        overflow-y: visible;
+        grid-template-areas:
+            "navbar"
+            "then";
+    }
+    .mainTextContainer,
+    .mainTextContainer__isDark {
+        margin-top: -20rem;
+        display: grid;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        grid-template-columns: 1fr;
+        place-content: center;
+        grid-area: then;
+
+        & h1{
+            font-size: 1.7rem;
+        }
+    }
+    .cornerGithubContainer{
+        display: none;
+    }
+    .cornerGithubContainer__isDark{
+        display: none;
+    }
+
+}
+

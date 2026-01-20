@@ -1,40 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import Reveal from "./Reveal";
-import Section from "./Section";
-import { projects } from "@/lib/projects";
+import { useTheme } from "./ThemeProvider";
 
 export default function ProjectsSection() {
-  return (
-    <Section className="min-h-[100vh]">
-      <Reveal>
-        <h1 className="text-5xl font-bold uppercase text-center mb-10">
-          Portfolio
-        </h1>
-      </Reveal>
+  const { isDark } = useTheme();
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map((p) => (
-          <Link key={p.slug} href={`/portfolio/${p.slug}`} className="no-underline">
-            <Reveal className="grid justify-center m-12">
-              <div className="grid gap-6">
-                <div className="relative w-full aspect-[4/3] overflow-hidden">
-                  <Image
-                    src={p.image.src}
-                    alt={p.image.alt}
-                    fill
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover grayscale hover:saturate-150 hover:opacity-75 transition duration-[2000ms]"
-                  />
-                </div>
-                <h2 className="text-2xl font-bold text-center">{p.title}</h2>
-              </div>
-            </Reveal>
-          </Link>
-        ))}
+  return (
+    <div className={isDark ? "projectsContainer__isDark" : "projectsContainer"}>
+      <Link href="/portfolio/thefootballstore">
+        <div className="projectsContainer__box" data-aos="fade">
+          <img src="/imgs/thefootballstore.png" alt="the football store website" />
+          <h2>The Football Store</h2>
+        </div>
+      </Link>
+
+      <Link href="/portfolio/digitalkiki">
+        <div className="projectsContainer__box" data-aos="fade">
+          <img src="/imgs/digitalkiki.png" alt="digital kiki website" />
+          <h2>Digital Kiki</h2>
+        </div>
+      </Link>
+
+      <div className="projectsContainer__box" data-aos="fade">
+        <img
+          src={isDark ? "/imgs/portfolio.png" : "/imgs/portfolioDark.png"}
+          alt="portfolio project"
+        />
+        <h2>Portfolio</h2>
       </div>
-    </Section>
+    </div>
   );
 }

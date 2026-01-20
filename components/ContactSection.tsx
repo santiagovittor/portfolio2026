@@ -1,151 +1,184 @@
 "use client";
 
-import { useState } from "react";
-import Section from "./Section";
-import Reveal from "./Reveal";
-import { FiGithub, FiLinkedin, FiFacebook, FiMail, FiPhone } from "react-icons/fi";
-import { siteConfig } from "@/lib/site";
+import { useMemo, useState } from "react";
+import { useTheme } from "./ThemeProvider";
+import SocialMedia from "./SocialMedia";
 
-type FormValues = { name: string; email: string; phone: string; message: string };
+type Values = {
+  nombre: string;
+  correo: string;
+  celular: string;
+  mensaje: string;
+};
 
 export default function ContactSection() {
-  const [values, setValues] = useState<FormValues>({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
+  const { isDark } = useTheme();
+
+  const [values, setValues] = useState<Values>({
+    nombre: "",
+    correo: "",
+    celular: "",
+    mensaje: "",
   });
-  const [submitted, setSubmitted] = useState(false);
 
-  function onChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setValues((v) => ({ ...v, [e.target.name]: e.target.value }));
-  }
+  const [touched, setTouched] = useState<Record<keyof Values, boolean>>({
+    nombre: false,
+    correo: false,
+    celular: false,
+    mensaje: false,
+  });
 
-  function onSubmit(e: React.FormEvent) {
+  const [sent, setSent] = useState(false);
+  const [messageId, setMessageId] = useState<string>("");
+
+  const errors = useMemo(() => {
+    const e: Partial<Record<keyof Values, string>> = {};
+
+    if (!values.nombre) e.nombre = "Por favor ingresa un nombre.";
+    else if (!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(values.nombre))
+      e.nombre = "El nombre solo puede contener letras y espacios.";
+
+    if (!values.correo) e.correo = "Por favor ingresa un correo electrónico.";
+    else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(values.correo))
+      e.correo = "Ingresa un correo válido.";
+
+    if (!values.celular) e.celular = "Por favor ingresa un celular.";
+    else if (!/^\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/.test(values.celular))
+      e.celular = "Ingresa un celular válido (ej: 1234567890).";
+
+    if (!values.mensaje) e.mensaje = "Por favor escribe tu mensaje.";
+
+    return e;
+  }, [values]);
+
+  const isValid = Object.keys(errors).length === 0;
+
+  const eachClass = isDark ? "inputContainer__each--isDark" : "inputContainer__each";
+
+  const onChange =
+    (key: keyof Values) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValues((v) => ({ ...v, [key]: e.target.value }));
+    };
+
+  const onBlur = (key: keyof Values) => () => {
+    setTouched((t) => ({ ...t, [key]: true }));
+  };
+
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!values.name || !values.email || !values.message) {
-      alert("Please fill out all required fields.");
-      return;
-    }
-    // Replace this with a real action (Formspree, server action, Firebase, etc.)
-    console.log("Contact form:", values);
 
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 12000);
-    setValues({ name: "", email: "", phone: "", message: "" });
-  }
+    // mark all touched
+    setTouched({
+      nombre: true,
+      correo: true,
+      celular: true,
+      mensaje: true,
+    });
+
+    if (!isValid) return;
+
+    const id = typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : String(Date.now());
+
+    setMessageId(id);
+    setSent(true);
+
+    setValues({ nombre: "", correo: "", celular: "", mensaje: "" });
+
+    window.setTimeout(() => setSent(false), 15000);
+  };
+
+  // NOTE: button classes are intentionally inverted to match the CRA styling:
+  // - Light theme uses the "IsDark" button class (black button on white background)
+  // - Dark theme uses the "normal" button class (white button on black background)
+  const activeButtonClass = isDark ? "inputContainer__button" : "inputContainer__buttonIsDark";
+  const disabledButtonClass = isDark
+    ? "inputContainer__buttonIsDark--disabled"
+    : "inputContainer__button--disabled";
 
   return (
-    <Section className="min-h-[100vh] grid place-items-center">
-      <div className="w-full max-w-2xl">
-        <Reveal>
-          <h1 className="text-5xl font-bold uppercase text-center mb-8">Contact</h1>
-        </Reveal>
+    <div className={isDark ? "contactContainer__isDark" : "contactContainer"}>
+      <div className="contactContainer__form" data-aos="fade-down">
+        <h1>CONTACTO</h1>
+        <SocialMedia />
 
-        <Reveal>
-          <div className="flex justify-center gap-8 text-3xl mb-10">
-            <a href={siteConfig.socials.github} aria-label="GitHub" target="_blank" rel="noreferrer">
-              <FiGithub className="hover:scale-110 transition-transform" />
-            </a>
-            <a href={siteConfig.socials.linkedin} aria-label="LinkedIn" target="_blank" rel="noreferrer">
-              <FiLinkedin className="hover:scale-110 transition-transform" />
-            </a>
-            <a href={siteConfig.socials.facebook} aria-label="Facebook" target="_blank" rel="noreferrer">
-              <FiFacebook className="hover:scale-110 transition-transform" />
-            </a>
-            <a href={`mailto:${siteConfig.email}`} aria-label="Email">
-              <FiMail className="hover:scale-110 transition-transform" />
-            </a>
-            <a href="tel:+10000000000" aria-label="Phone">
-              <FiPhone className="hover:scale-110 transition-transform" />
-            </a>
-          </div>
-        </Reveal>
+        <h4>
+          Si desea contactarme para colaborar en un proyecto o por alguna otra razón
+          puede ponerse en contacto completando el formulario
+        </h4>
 
-        <form onSubmit={onSubmit} className="grid gap-8">
-          <Reveal>
-            <div className="grid gap-2">
-              <label htmlFor="name" className="uppercase text-sm font-semibold">
-                Name*
-              </label>
+        <div className="inputContainer">
+          <form onSubmit={onSubmit}>
+            <div className={eachClass}>
+              <label htmlFor="nombre">Nombre</label>
               <input
-                id="name"
-                name="name"
-                value={values.name}
-                onChange={onChange}
-                className="bg-transparent border-b-2 border-gray-400 dark:border-gray-500 py-2 outline-none focus:border-brand-dark dark:focus:border-white transition-colors duration-300"
-                placeholder="Your name"
+                id="nombre"
+                value={values.nombre}
+                onChange={onChange("nombre")}
+                onBlur={onBlur("nombre")}
+                type="text"
               />
             </div>
-          </Reveal>
+            {touched.nombre && errors.nombre ? (
+              <div className="inputContainer__each--error">{errors.nombre}</div>
+            ) : null}
 
-          <Reveal>
-            <div className="grid gap-2">
-              <label htmlFor="email" className="uppercase text-sm font-semibold">
-                Email*
-              </label>
+            <div className={eachClass}>
+              <label htmlFor="correo">Mail</label>
               <input
-                id="email"
-                name="email"
+                id="correo"
+                value={values.correo}
+                onChange={onChange("correo")}
+                onBlur={onBlur("correo")}
                 type="email"
-                value={values.email}
-                onChange={onChange}
-                className="bg-transparent border-b-2 border-gray-400 dark:border-gray-500 py-2 outline-none focus:border-brand-dark dark:focus:border-white transition-colors duration-300"
-                placeholder="you@example.com"
               />
             </div>
-          </Reveal>
+            {touched.correo && errors.correo ? (
+              <div className="inputContainer__each--error">{errors.correo}</div>
+            ) : null}
 
-          <Reveal>
-            <div className="grid gap-2">
-              <label htmlFor="phone" className="uppercase text-sm font-semibold">
-                Phone
-              </label>
+            <div className={eachClass}>
+              <label htmlFor="celular">Celular</label>
               <input
-                id="phone"
-                name="phone"
-                value={values.phone}
-                onChange={onChange}
-                className="bg-transparent border-b-2 border-gray-400 dark:border-gray-500 py-2 outline-none focus:border-brand-dark dark:focus:border-white transition-colors duration-300"
-                placeholder="+1 555 555 5555"
+                id="celular"
+                value={values.celular}
+                onChange={onChange("celular")}
+                onBlur={onBlur("celular")}
+                type="text"
               />
             </div>
-          </Reveal>
+            {touched.celular && errors.celular ? (
+              <div className="inputContainer__each--error">{errors.celular}</div>
+            ) : null}
 
-          <Reveal>
-            <div className="grid gap-2">
-              <label htmlFor="message" className="uppercase text-sm font-semibold">
-                Message*
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={4}
-                maxLength={200}
-                value={values.message}
-                onChange={onChange}
-                className="bg-transparent border-b-2 border-gray-400 dark:border-gray-500 py-2 outline-none focus:border-brand-dark dark:focus:border-white transition-colors duration-300 resize-none"
-                placeholder="How can I help?"
+            <div className={eachClass}>
+              <label htmlFor="mensaje">Mensaje</label>
+              <input
+                id="mensaje"
+                value={values.mensaje}
+                onChange={onChange("mensaje")}
+                onBlur={onBlur("mensaje")}
+                type="text"
+                maxLength={100}
               />
             </div>
-          </Reveal>
+            {touched.mensaje && errors.mensaje ? (
+              <div className="inputContainer__each--error">{errors.mensaje}</div>
+            ) : null}
 
-          <Reveal>
-            <button
-              type="submit"
-              className="rounded-md py-3 font-semibold transition-colors duration-[2000ms] bg-brand-dark text-white hover:bg-white hover:text-brand-dark dark:bg-white dark:text-brand-dark dark:hover:bg-brand-dark dark:hover:text-white"
-            >
-              Send Message
+            <button className={isValid ? activeButtonClass : disabledButtonClass} type="submit">
+              Enviar mensaje
             </button>
-          </Reveal>
 
-          {submitted && (
-            <p className="text-center text-green-600 dark:text-green-400">
-              Your message was sent successfully!
-            </p>
-          )}
-        </form>
+            {sent ? (
+              <div className="inputContainer__successAlert">
+                Recibí tu mensaje con éxito con el código {messageId}!
+              </div>
+            ) : null}
+          </form>
+        </div>
       </div>
-    </Section>
+    </div>
   );
 }

@@ -9,33 +9,26 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
-  return ctx;
-}
-
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDark, setIsDark] = useState(false);
 
+  // Load preference on mount
   useEffect(() => {
-    // If a class is already set by the inline script, read it.
-    const alreadyDark = document.documentElement.classList.contains("dark");
-
-    const stored = localStorage.getItem("theme");
-    if (stored === "dark") setIsDark(true);
-    else if (stored === "light") setIsDark(false);
-    else setIsDark(alreadyDark);
+    try {
+      const stored = window.localStorage.getItem("theme");
+      if (stored === "dark") setIsDark(true);
+      if (stored === "light") setIsDark(false);
+    } catch {
+      // ignore
+    }
   }, []);
 
+  // Persist preference
   useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+    try {
+      window.localStorage.setItem("theme", isDark ? "dark" : "light");
+    } catch {
+      // ignore
     }
   }, [isDark]);
 
@@ -48,4 +41,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  return ctx;
 }

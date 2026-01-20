@@ -1,0 +1,93 @@
+$fancyBoxShadow: 0px 12px 18px -6px rgba(0, 0, 0, 0.3);
+$fancyBoxShadowDark: 0px 12px 18px -6px rgb(114, 113, 113);
+
+.portfolioTitle{
+    display: none;
+    justify-content: center;
+    padding-top: 5rem;
+    & h1{
+        font-size: 3rem;
+        text-transform: uppercase;
+    }
+
+}
+
+.projectsContainer{
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    color: #181818;
+    transition: 2s;
+    & h2{
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        padding-top: 3rem;
+    }
+    & a{
+        text-decoration: none;
+        color: #181818;
+       
+    }
+    &__box{
+        display: grid;
+        justify-content: center;
+        height: fit-content;
+        margin: 3rem;
+        & img{
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+            filter: grayscale(1);
+            &:hover{
+                opacity: 0.75;
+                box-shadow: $fancyBoxShadow;
+                filter: saturate(1.5);
+                transition: 2s;
+            }
+        }
+        
+    }
+    &__isDark{
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    color: white;
+    transition: 2s;
+    & h2{
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        padding-top: 3rem;
+    }
+    & a{
+        text-decoration: none;
+        color: white;
+        
+    }
+    & img{
+        filter: grayscale(1);
+        &:hover{
+        opacity: 0.75;
+        box-shadow: $fancyBoxShadowDark;
+        filter: saturate(1.5);
+        transition: 2s;
+}
+    }
+}
+}
+
+
+@media only screen and (max-width: 425px) {
+
+    .portfolioTitle{
+        display: grid;
+    }
+
+}

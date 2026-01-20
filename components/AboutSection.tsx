@@ -1,101 +1,66 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import Reveal from "./Reveal";
-import Section from "./Section";
+import { useTheme } from "./ThemeProvider";
 
 export default function AboutSection() {
-  const [tab, setTab] = useState<"current" | "goals">("current");
+  const { isDark } = useTheme();
 
-  const tabBase =
-    "relative cursor-pointer uppercase font-semibold transition-transform duration-300 hover:scale-110";
-  const underline =
-    "after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[3px] after:w-full after:origin-left after:scale-x-0 after:transition-transform after:duration-500 hover:after:scale-x-100";
+  const [tab, setTab] = useState<"actual" | "goals">("actual");
+
+  // IMPORTANT:
+  // Sass expects:
+  // - in DARK mode: profileCardContainer__text--menu (underline WHITE)
+  // - in LIGHT mode: profileCardContainer__text--menuIsDark (underline BLACK)
+  const menuClass = isDark
+    ? "profileCardContainer__text--menu"
+    : "profileCardContainer__text--menuIsDark";
 
   return (
-    <Section className="min-h-[100vh] grid items-center">
-      <div className="grid md:grid-cols-2 gap-10 items-center">
-        <Reveal className="grid justify-center">
-          <div className="relative h-[50vh] w-[50vh] max-w-[320px] max-h-[320px] md:max-w-none md:max-h-none overflow-hidden rounded-full">
-            <Image
-              src="/placeholder-profile.jpg"
-              alt="Profile placeholder"
-              fill
-              sizes="(min-width: 768px) 50vh, 320px"
-              className="object-cover grayscale hover:grayscale-0 transition duration-[2000ms]"
-              priority={false}
-            />
-          </div>
-        </Reveal>
+    <div className="profileCardContainer">
+      <div className="profileCardContainer__img" data-aos="fade" data-aos-duration="3000">
+        {/* Replace with your real profile image */}
+        <img src="/imgs/profilePicture.jpg" alt="profile picture" />
+      </div>
 
-        <div className="grid gap-6">
-          <Reveal>
-            <ul className="flex flex-wrap gap-10 mb-2">
-              <li
-                className={[
-                  tabBase,
-                  underline,
-                  "after:bg-white dark:after:bg-brand-dark",
-                  tab === "current" ? "font-bold" : "opacity-80",
-                ].join(" ")}
-                onClick={() => setTab("current")}
-              >
-                Currently
-              </li>
-              <li
-                className={[
-                  tabBase,
-                  underline,
-                  "after:bg-white dark:after:bg-brand-dark",
-                  tab === "goals" ? "font-bold" : "opacity-80",
-                ].join(" ")}
-                onClick={() => setTab("goals")}
-              >
-                Goals
-              </li>
-            </ul>
-          </Reveal>
+      <div className="profileCardContainer__text">
+        <div className={menuClass}>
+          <ul>
+            <li
+              onClick={() => setTab("actual")}
+              id={tab === "actual" ? "isActive" : "notActive"}
+            >
+              Actualidad
+            </li>
+            <li
+              onClick={() => setTab("goals")}
+              id={tab === "goals" ? "isActive" : "notActive"}
+            >
+              Objetivos
+            </li>
+          </ul>
 
-          {tab === "current" ? (
-            <div className="grid gap-4 text-lg leading-10">
-              <Reveal>
-                <p>
-                  Placeholder bio. Replace this text with your own story (focus on outcomes, taste in UI,
-                  and what you ship).
-                </p>
-              </Reveal>
-              <Reveal>
-                <p>
-                  Add 1–2 lines about your current role + what you specialize in (UI engineering, design
-                  systems, performance, etc.).
-                </p>
-              </Reveal>
-              <Reveal>
-                <p className="text-red-600 font-bold">
-                  <a href="/resume.pdf" className="no-underline">
-                    Download résumé (PDF)
-                  </a>
-                </p>
-              </Reveal>
-            </div>
+          {tab === "actual" ? (
+            <>
+              <p>
+                Escribe aquí tu bio “Actualidad”. (Mantén frases cortas para que la
+                composición se vea como el original.)
+              </p>
+              <p id="cv">
+                <a href="/pdfs/resume.pdf" target="_blank" rel="noreferrer">
+                  Descargar CV
+                </a>
+              </p>
+            </>
           ) : (
-            <div className="grid gap-4 text-lg leading-10">
-              <Reveal>
-                <p>
-                  Placeholder goals. Replace with your own goals: e.g. mastering motion design, improving
-                  accessibility, contributing to OSS, etc.
-                </p>
-              </Reveal>
-              <Reveal>
-                <p>
-                  Mention the kinds of projects you want next and what impact you aim to have.
-                </p>
-              </Reveal>
-            </div>
+            <>
+              <p>
+                Escribe aquí tu bio “Objetivos” / enfoque profesional / lo que estás buscando.
+              </p>
+            </>
           )}
         </div>
       </div>
-    </Section>
+    </div>
   );
 }

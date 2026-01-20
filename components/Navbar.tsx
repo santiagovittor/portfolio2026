@@ -1,86 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { HiHome, HiUserCircle, HiBriefcase, HiMail, HiLightBulb } from "react-icons/hi";
 import { useTheme } from "./ThemeProvider";
 
-const navItems = [
-  { href: "/", label: "Home", Icon: HiHome },
-  { href: "/about", label: "About", Icon: HiUserCircle },
-  { href: "/portfolio", label: "Portfolio", Icon: HiBriefcase },
-  { href: "/contact", label: "Contact", Icon: HiMail },
-];
-
-export default function Navbar() {
-  const pathname = usePathname();
+export default function NavBar() {
   const { isDark, toggleTheme } = useTheme();
 
-  const iconBase = "h-8 w-8 transition-transform hover:scale-110 duration-300";
-  const active = isDark ? "text-white" : "text-brand-dark";
-  const inactive = isDark ? "text-gray-300" : "text-gray-600";
+  const containerClass = isDark ? "navBarContainer__isDark" : "navBarContainer";
+
+  const icon = (lightSrc: string, darkSrc: string) => (isDark ? darkSrc : lightSrc);
 
   return (
-    <>
-      {/* Desktop: vertical, fixed right (matches original behavior) */}
-      <nav className="hidden md:grid fixed right-[50px] top-0 h-full z-50 transition-colors duration-[2000ms]">
-        <ul className="grid justify-center text-center pt-12 gap-8">
-          <li>
-            <button
-              type="button"
-              aria-label="Toggle theme"
-              onClick={toggleTheme}
-              className="grid place-items-center"
-            >
-              <HiLightBulb
-                className={[
-                  iconBase,
-                  isDark ? "text-yellow-300" : "text-brand-dark rotate-180",
-                ].join(" ")}
-              />
-            </button>
-          </li>
+    <div className={containerClass}>
+      <ul>
+        <li>
+          <img
+            id="lightBulb"
+            src={isDark ? "/svgs/turnOn.svg" : "/svgs/turnOff.svg"}
+            alt={isDark ? "set light theme icon" : "set dark theme icon"}
+            onClick={toggleTheme}
+          />
+        </li>
 
-          {navItems.map(({ href, label, Icon }) => (
-            <li key={href}>
-              <Link href={href} aria-label={label} className="grid place-items-center">
-                <Icon className={[iconBase, pathname === href ? active : inactive].join(" ")} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <li>
+          <Link href="/about" aria-label="about me">
+            <img
+              src={icon("/svgs/aboutMe.svg", "/svgs/aboutMeDark.svg")}
+              alt={isDark ? "about me dark icon" : "about me icon"}
+            />
+          </Link>
+        </li>
 
-      {/* Mobile: sticky horizontal bar */}
-      <nav className="md:hidden sticky top-[10px] z-50 px-4">
-        <div className="h-[12vh] rounded-lg bg-white dark:bg-brand-dark transition-colors duration-[2000ms] shadow-md">
-          <ul className="h-full flex items-center justify-around">
-            <li>
-              <button
-                type="button"
-                aria-label="Toggle theme"
-                onClick={toggleTheme}
-                className="grid place-items-center"
-              >
-                <HiLightBulb
-                  className={[
-                    iconBase,
-                    isDark ? "text-yellow-300" : "text-brand-dark rotate-180",
-                  ].join(" ")}
-                />
-              </button>
-            </li>
+        <li>
+          <Link href="/" aria-label="home">
+            <img
+              src={icon("/svgs/home.svg", "/svgs/homeDark.svg")}
+              alt={isDark ? "home dark icon" : "home icon"}
+            />
+          </Link>
+        </li>
 
-            {navItems.map(({ href, label, Icon }) => (
-              <li key={href}>
-                <Link href={href} aria-label={label} className="grid place-items-center">
-                  <Icon className={[iconBase, pathname === href ? active : inactive].join(" ")} />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </nav>
-    </>
+        <li>
+          <Link href="/portfolio" aria-label="portfolio">
+            <img
+              src={icon("/svgs/portfolio.svg", "/svgs/portfolioDark.svg")}
+              alt={isDark ? "portfolio dark icon" : "portfolio icon"}
+            />
+          </Link>
+        </li>
+
+        <li>
+          <Link href="/contact" aria-label="contact me">
+            <img
+              src={icon("/svgs/contact.svg", "/svgs/contactDark.svg")}
+              alt={isDark ? "contact me dark icon" : "contact me icon"}
+            />
+          </Link>
+        </li>
+      </ul>
+    </div>
   );
 }
