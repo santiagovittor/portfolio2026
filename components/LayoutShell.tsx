@@ -1,7 +1,7 @@
 "use client";
 
 import AOSInit from "./AOSInit";
-import NavBar from "./NavBar";
+import NavBar from "./Navbar";
 import { useTheme } from "./ThemeProvider";
 
 export default function LayoutShell({
