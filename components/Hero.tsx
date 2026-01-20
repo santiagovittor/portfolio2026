@@ -18,11 +18,11 @@ export default function Hero() {
       <CornerGithub />
 
       <h1 data-aos="zoom-in" data-aos-duration="1500">
-        Hola, soy
+        Hi, I’m
       </h1>
 
       <h1 data-aos="zoom-out" data-aos-duration="1500">
-        {swap ? "Santiago Vittor" : "Desarrollador frontEnd"}
+        {swap ? "Santiago Vittor" : "a Software Engineer"}
       </h1>
     </div>
   );

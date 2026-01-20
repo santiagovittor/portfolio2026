@@ -7,8 +7,8 @@ export const siteConfig = {
   locale: "en_US",
   email: "you@example.com",
   socials: {
-    github: "https://github.com/your-username",
-    linkedin: "https://www.linkedin.com/in/your-handle",
-    facebook: "https://facebook.com/your-handle",
+    github: "https://github.com/santiagovittor",
+    linkedin: "https://www.linkedin.com/in/santiagovittor",
+    facebook: "https://www.facebook.com/santi.vittor",
   },
 } as const;

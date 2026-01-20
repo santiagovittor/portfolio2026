@@ -1,7 +1,7 @@
 "use client";
 
 import AOSInit from "./AOSInit";
-import NavBar from "./Navbar";
+import Navbar from "./NavBar";
 import { useTheme } from "./ThemeProvider";
 
 export default function LayoutShell({
@@ -15,7 +15,7 @@ export default function LayoutShell({
     <section className={isDark ? "landingDisposition__isDark" : "landingDisposition"}>
       <AOSInit />
       {children}
-      <NavBar />
+      <Navbar />
     </section>
   );
 }

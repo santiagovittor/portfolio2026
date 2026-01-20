@@ -42,3 +42,15 @@ table {
 	border-spacing: 0;
 }
 
+/* --- Prevent accidental horizontal scroll (safe guard) --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}

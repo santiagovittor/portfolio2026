@@ -1,51 +1,89 @@
 export type Project = {
   slug: string;
   title: string;
-  blurb: string;
-  description: string;
-  technologies: string[];
-  image: { src: string; alt: string };
-  href: string;
+  subtitle?: string;
+  status?: "active" | "not-maintained" | "wip";
+  image: {
+    light: string;
+    dark?: string;
+    alt: string;
+  };
+  links: {
+    demo?: string;
+    repo?: string;
+  };
 };
 
 export const projects: Project[] = [
   {
-    slug: "the-football-store",
+    slug: "thefootballstore",
     title: "The Football Store",
-    blurb: "Mock e-commerce for classic football jerseys.",
-    description:
-      "Placeholder description. Replace with your own copy. Keep it short, clear, and outcome-based (what you built, how, and why it matters).",
-    technologies: [
-      "React (components, hooks)",
-      "Firestore (optional)",
-      "CSS / UI system",
-      "Vercel deploy",
-    ],
-    image: { src: "/project1-placeholder.png", alt: "Project screenshot placeholder" },
-    href: "https://example.com",
+    subtitle: "E-commerce (legacy)",
+    status: "not-maintained",
+    image: {
+      light: "/imgs/thefootballstore.png",
+      alt: "The Football Store website preview",
+    },
+    links: {
+      // demo intentionally omitted (old link was placeholder)
+      repo: "https://github.com/santiagovittor/reactCoderVittor",
+    },
   },
   {
-    slug: "digital-kiki",
-    title: "Digital Kiki",
-    blurb: "Landing site for a digital agency concept.",
-    description:
-      "Placeholder description. Replace with your own copy. Focus on UX details, responsiveness, and performance.",
-    technologies: ["React / Next.js", "Tailwind CSS", "Responsive layout", "SEO"],
-    image: { src: "/project2-placeholder.png", alt: "Project screenshot placeholder" },
-    href: "https://example.com",
+    slug: "portfolio2026",
+    title: "Portfolio 2026",
+    subtitle: "Next.js + SEO-focused rebuild",
+    status: "active",
+    image: {
+      light: "/imgs/portfolio.png",
+      dark: "/imgs/portfolioDark.png",
+      alt: "Portfolio 2026 preview",
+    },
+    links: {
+      demo: "https://portfolio2026-beige.vercel.app",
+      repo: "https://github.com/santiagovittor/portfolio2026",
+    },
   },
   {
-    slug: "portfolio",
-    title: "Portfolio",
-    blurb: "This site — rebuilt in Next.js for 2026-grade SEO/perf.",
-    description:
-      "Placeholder description. Replace with your own copy. Mention App Router, Server Components, metadata, and image/font optimization.",
-    technologies: ["Next.js App Router", "TypeScript", "Tailwind CSS", "Accessibility"],
-    image: { src: "/project3-placeholder.png", alt: "Project screenshot placeholder" },
-    href: "https://example.com",
+    slug: "movie-reco",
+    title: "Movie Reco",
+    subtitle: "AI-powered movie recommendations",
+    status: "active",
+    image: {
+      light: "/imgs/movieReco.png",
+      alt: "Movie Reco app preview",
+    },
+    links: {
+      demo: "https://movie-reco-mu.vercel.app",
+      repo: "https://github.com/santiagovittor/movie-reco",
+    },
+  },
+  {
+    slug: "digitalkiki",
+    title: "Kiki Digital",
+    subtitle: "Digital marketing landing page",
+    status: "active",
+    image: {
+      light: "/imgs/digitalkiki.png",
+      alt: "Kiki Digital website preview",
+    },
+    links: {
+      demo: "https://digitalkiki.vercel.app/",
+      repo: "https://github.com/santiagovittor/marketingDigitalKiki",
+    },
+  },
+  {
+    slug: "dubanronald",
+    title: "Duban Ronald",
+    subtitle: "Restaurant site",
+    status: "active",
+    image: {
+      light: "/imgs/dubanronald.png",
+      alt: "Duban Ronald website preview",
+    },
+    links: {
+      demo: "https://dubanronald.com",
+      repo: "https://github.com/santiagovittor/dubanronald", // keep repo if that’s the repo name
+    },
   },
 ];
-
-export function getProject(slug: string) {
-  return projects.find((p) => p.slug === slug);
-}

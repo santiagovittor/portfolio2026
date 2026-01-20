@@ -1,105 +1,161 @@
 $black: #18191A;
 
-
 .navBarContainer {
+  display: grid;
+  height: 100%;
+  color: $black;
+  grid-template-columns: 1fr;
+  right: 50px;
+  position: fixed;
+  transition: 2s;
+
+  & ul {
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    padding-top: 3rem;
+
+    & li {
+      height: 2rem;
+      width: 2rem;
+    }
+
+    & img {
+      height: 2rem;
+      width: 2rem;
+      transition: 2s;
+
+      &:hover {
+        transform: scale(1.1);
+        transition: 1s;
+      }
+    }
+
+    & #lightBulb {
+      transform: rotate(180deg);
+      cursor: pointer;
+    }
+  }
+
+  &__isDark {
     display: grid;
     height: 100%;
-    color: $black;
-    grid-template-columns: 1fr;
+    color: white;
     right: 50px;
     position: fixed;
+    grid-template-columns: 1fr;
     transition: 2s;
+
     & ul {
-        display: grid;
-        justify-content: center;
-        text-align: center;
-        padding-top: 3rem;
-        & li {
-            height: 2rem;
-            width: 2rem;
-        }
-        & img {
-            height: 2rem;
-            width: 2rem;
-            transition: 2s;
-            &:hover {
-                transform: scale(1.1);
-                transition: 1s;
-            }
-        }
-        & #lightBulb {
-            transform: rotate(180deg);
-            cursor: pointer;
-        }
-    }
-    &__isDark {
-        display: grid;
-        height: 100%;
-        color: white;
-        right: 50px;
-        position: fixed;
-        grid-template-columns: 1fr;
-        transition: 2s;
-        & ul {
-            display: grid;
-            justify-content: center;
-            text-align: center;
-            padding-top: 3rem;
-            & #lightBulb {
-                cursor: pointer;
-            }
-        
-        }
-        & li {
-            height: 2rem;
-            width: 2rem;
-        }
-        & img {
-            height: 2rem;
-            width: 2rem;
-            transition: 2s;
-            &:hover {
-                transform: scale(1.1);
-                transition: 1s;
-            }
-        }
+      display: grid;
+      justify-content: center;
+      text-align: center;
+      padding-top: 3rem;
+
+      & #lightBulb {
+        cursor: pointer;
+      }
     }
 
+    & li {
+      height: 2rem;
+      width: 2rem;
+    }
+
+    & img {
+      height: 2rem;
+      width: 2rem;
+      transition: 2s;
+
+      &:hover {
+        transform: scale(1.1);
+        transition: 1s;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 768px) {
-    .navBarContainer {
-        grid-area: navbar;
-        display: flex;
-        flex-direction: row;
-        height: 12vh;
-        position: sticky;
-        top: 10px;
-        background-color: white;
-        padding: 0;
-        & ul {
-            display: flex;
-            padding: 1rem 0 1rem 0;
-            justify-content: space-around;
-            width: 100%;
-            flex-direction: row;
-        }
-        &__isDark {
-            display: flex;
-            grid-area: navbar;
-            flex-direction: row;
-            height: 12vh;
-            position: sticky;
-            top: 10px;
-            background-color: $black;
-            padding: 0;
-            & ul {
-                display: flex;
-                padding: 1rem 0 1rem 0;
-                justify-content: space-around;
-                width: 100%;
-                flex-direction: row;
-            }
-        }
+  .navBarContainer {
+    grid-area: navbar;
+    display: flex;
+    flex-direction: row;
+    height: 10vh; /* was 12vh */
+    position: sticky;
+    top: 10px;
+    background-color: white;
+    padding: 0;
+
+    /* ✅ ensure the bar spans the whole viewport width on mobile */
+    left: 0;
+    right: 0;
+    width: 100%;
+
+    & ul {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+
+      /* ✅ balanced, uses full width, not cramped */
+      justify-content: space-evenly;
+      align-items: center;
+
+      /* ✅ reduce vertical padding */
+      padding: 0.75rem 0;
+
+      /* ✅ keep icons away from edges */
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
+
+    &__isDark {
+      display: flex;
+      grid-area: navbar;
+      flex-direction: row;
+      height: 10vh; /* was 12vh */
+      position: sticky;
+      top: 10px;
+      background-color: $black;
+      padding: 0;
+
+      /* ✅ ensure the bar spans the whole viewport width on mobile */
+      left: 0;
+      right: 0;
+      width: 100%;
+
+      & ul {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+
+        justify-content: space-evenly;
+        align-items: center;
+
+        padding: 0.75rem 0;
+
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+    }
+  }
+}
+
+/* ✅ small phones: shrink icons so nothing collides */
+@media only screen and (max-width: 420px) {
+  .navBarContainer,
+  .navBarContainer__isDark {
+    height: 9vh;
+  }
+
+  .navBarContainer img,
+  .navBarContainer__isDark img {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+
+  .navBarContainer li,
+  .navBarContainer__isDark li {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
 }

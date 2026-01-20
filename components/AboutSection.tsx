@@ -19,8 +19,7 @@ export default function AboutSection() {
   return (
     <div className="profileCardContainer">
       <div className="profileCardContainer__img" data-aos="fade" data-aos-duration="3000">
-        {/* Replace with your real profile image */}
-        <img src="/imgs/profilePicture.jpg" alt="profile picture" />
+        <img src="/imgs/profilePicture.jpg" alt="Portrait of Santiago Vittor" />
       </div>
 
       <div className="profileCardContainer__text">
@@ -30,32 +29,38 @@ export default function AboutSection() {
               onClick={() => setTab("actual")}
               id={tab === "actual" ? "isActive" : "notActive"}
             >
-              Actualidad
+              Now
             </li>
             <li
               onClick={() => setTab("goals")}
               id={tab === "goals" ? "isActive" : "notActive"}
             >
-              Objetivos
+              Next
             </li>
           </ul>
 
           {tab === "actual" ? (
             <>
               <p>
-                Escribe aquí tu bio “Actualidad”. (Mantén frases cortas para que la
-                composición se vea como el original.)
+                I build clean, user-friendly web experiences with React and Next.js, and I
+                also love automation that removes busywork. At FoodStyles, I lead AI and
+                data training programs (LLMs, prompt mastery, data literacy) and build
+                internal tools and workflow automations.
               </p>
+
               <p id="cv">
                 <a href="/pdfs/resume.pdf" target="_blank" rel="noreferrer">
-                  Descargar CV
+                  Download resume
                 </a>
               </p>
             </>
           ) : (
             <>
               <p>
-                Escribe aquí tu bio “Objetivos” / enfoque profesional / lo que estás buscando.
+                I’m looking for a frontend or software engineering role where I can ship
+                polished UI, integrate APIs, and keep improving performance, accessibility,
+                and developer experience. I’m especially excited about products that use AI
+                in practical, user-first ways.
               </p>
             </>
           )}

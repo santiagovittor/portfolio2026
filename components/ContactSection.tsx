@@ -34,19 +34,19 @@ export default function ContactSection() {
   const errors = useMemo(() => {
     const e: Partial<Record<keyof Values, string>> = {};
 
-    if (!values.nombre) e.nombre = "Por favor ingresa un nombre.";
+    if (!values.nombre) e.nombre = "Please enter your name.";
     else if (!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(values.nombre))
-      e.nombre = "El nombre solo puede contener letras y espacios.";
+      e.nombre = "Name can only contain letters and spaces.";
 
-    if (!values.correo) e.correo = "Por favor ingresa un correo electrónico.";
+    if (!values.correo) e.correo = "Please enter your email.";
     else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(values.correo))
-      e.correo = "Ingresa un correo válido.";
+      e.correo = "Please enter a valid email address.";
 
-    if (!values.celular) e.celular = "Por favor ingresa un celular.";
+    if (!values.celular) e.celular = "Please enter a phone number.";
     else if (!/^\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/.test(values.celular))
-      e.celular = "Ingresa un celular válido (ej: 1234567890).";
+      e.celular = "Please enter a valid phone number (10 digits).";
 
-    if (!values.mensaje) e.mensaje = "Por favor escribe tu mensaje.";
+    if (!values.mensaje) e.mensaje = "Please write a message.";
 
     return e;
   }, [values]);
@@ -67,7 +67,6 @@ export default function ContactSection() {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // mark all touched
     setTouched({
       nombre: true,
       correo: true,
@@ -77,9 +76,10 @@ export default function ContactSection() {
 
     if (!isValid) return;
 
-    const id = typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : String(Date.now());
+    const id =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : String(Date.now());
 
     setMessageId(id);
     setSent(true);
@@ -90,8 +90,6 @@ export default function ContactSection() {
   };
 
   // NOTE: button classes are intentionally inverted to match the CRA styling:
-  // - Light theme uses the "IsDark" button class (black button on white background)
-  // - Dark theme uses the "normal" button class (white button on black background)
   const activeButtonClass = isDark ? "inputContainer__button" : "inputContainer__buttonIsDark";
   const disabledButtonClass = isDark
     ? "inputContainer__buttonIsDark--disabled"
@@ -100,18 +98,18 @@ export default function ContactSection() {
   return (
     <div className={isDark ? "contactContainer__isDark" : "contactContainer"}>
       <div className="contactContainer__form" data-aos="fade-down">
-        <h1>CONTACTO</h1>
+        <h1>CONTACT</h1>
         <SocialMedia />
 
         <h4>
-          Si desea contactarme para colaborar en un proyecto o por alguna otra razón
-          puede ponerse en contacto completando el formulario
+          Want to collaborate or talk about an opportunity? Send me a message using the
+          form below.
         </h4>
 
         <div className="inputContainer">
           <form onSubmit={onSubmit}>
             <div className={eachClass}>
-              <label htmlFor="nombre">Nombre</label>
+              <label htmlFor="nombre">Name</label>
               <input
                 id="nombre"
                 value={values.nombre}
@@ -125,7 +123,7 @@ export default function ContactSection() {
             ) : null}
 
             <div className={eachClass}>
-              <label htmlFor="correo">Mail</label>
+              <label htmlFor="correo">Email</label>
               <input
                 id="correo"
                 value={values.correo}
@@ -139,7 +137,7 @@ export default function ContactSection() {
             ) : null}
 
             <div className={eachClass}>
-              <label htmlFor="celular">Celular</label>
+              <label htmlFor="celular">Phone</label>
               <input
                 id="celular"
                 value={values.celular}
@@ -153,7 +151,7 @@ export default function ContactSection() {
             ) : null}
 
             <div className={eachClass}>
-              <label htmlFor="mensaje">Mensaje</label>
+              <label htmlFor="mensaje">Message</label>
               <input
                 id="mensaje"
                 value={values.mensaje}
@@ -168,12 +166,12 @@ export default function ContactSection() {
             ) : null}
 
             <button className={isValid ? activeButtonClass : disabledButtonClass} type="submit">
-              Enviar mensaje
+              Send message
             </button>
 
             {sent ? (
               <div className="inputContainer__successAlert">
-                Recibí tu mensaje con éxito con el código {messageId}!
+                Message sent! Reference: {messageId}
               </div>
             ) : null}
           </form>

@@ -11,8 +11,9 @@ const rajdhani = Rajdhani({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio 2026",
-  description: "Portfolio built with Next.js",
+  title: "Santiago Vittor — Software Engineer (Frontend)",
+  description:
+    "Software engineer in Buenos Aires building React/Next.js web experiences, automation tools, and practical AI-enabled workflows.",
 };
 
 export default function RootLayout({
