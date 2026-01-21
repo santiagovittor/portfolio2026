@@ -5,48 +5,54 @@ import { useTheme } from "./ThemeProvider";
 import SocialMedia from "./SocialMedia";
 
 type Values = {
-  nombre: string;
-  correo: string;
-  celular: string;
-  mensaje: string;
+  name: string;
+  email: string;
+  message: string;
+  // honeypot
+  website: string;
 };
+
+type Status = "idle" | "sending" | "sent" | "error";
 
 export default function ContactSection() {
   const { isDark } = useTheme();
 
   const [values, setValues] = useState<Values>({
-    nombre: "",
-    correo: "",
-    celular: "",
-    mensaje: "",
+    name: "",
+    email: "",
+    message: "",
+    website: "",
   });
 
   const [touched, setTouched] = useState<Record<keyof Values, boolean>>({
-    nombre: false,
-    correo: false,
-    celular: false,
-    mensaje: false,
+    name: false,
+    email: false,
+    message: false,
+    website: false,
   });
 
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [serverMsg, setServerMsg] = useState<string>("");
   const [messageId, setMessageId] = useState<string>("");
 
   const errors = useMemo(() => {
-    const e: Partial<Record<keyof Values, string>> = {};
+    const e: Partial<Record<keyof Omit<Values, "website">, string>> = {};
 
-    if (!values.nombre) e.nombre = "Please enter your name.";
-    else if (!/^[a-zA-ZÀ-ÿ\s]{1,40}$/.test(values.nombre))
-      e.nombre = "Name can only contain letters and spaces.";
+    const name = values.name.trim();
+    const email = values.email.trim();
+    const message = values.message.trim();
 
-    if (!values.correo) e.correo = "Please enter your email.";
-    else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(values.correo))
-      e.correo = "Please enter a valid email address.";
+    if (!name) e.name = "Please enter your name.";
+    else if (name.length < 2) e.name = "Name is too short.";
+    else if (name.length > 80) e.name = "Name is too long (max 80).";
 
-    if (!values.celular) e.celular = "Please enter a phone number.";
-    else if (!/^\(?(\d{3})\)?[-]?(\d{3})[-]?(\d{4})$/.test(values.celular))
-      e.celular = "Please enter a valid phone number (10 digits).";
+    if (!email) e.email = "Please enter your email.";
+    else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email))
+      e.email = "Please enter a valid email.";
 
-    if (!values.mensaje) e.mensaje = "Please write a message.";
+    if (!message) e.message = "Please write your message.";
+    else if (message.length < 10) e.message = "Message is too short (min 10).";
+    else if (message.length > 2000) e.message = "Message is too long (max 2000).";
 
     return e;
   }, [values]);
@@ -56,7 +62,8 @@ export default function ContactSection() {
   const eachClass = isDark ? "inputContainer__each--isDark" : "inputContainer__each";
 
   const onChange =
-    (key: keyof Values) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (key: keyof Values) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setValues((v) => ({ ...v, [key]: e.target.value }));
     };
 
@@ -64,116 +71,155 @@ export default function ContactSection() {
     setTouched((t) => ({ ...t, [key]: true }));
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setTouched({
-      nombre: true,
-      correo: true,
-      celular: true,
-      mensaje: true,
+      name: true,
+      email: true,
+      message: true,
+      website: true,
     });
 
-    if (!isValid) return;
+    if (!isValid || status === "sending") return;
 
-    const id =
-      typeof crypto !== "undefined" && "randomUUID" in crypto
-        ? crypto.randomUUID()
-        : String(Date.now());
+    setStatus("sending");
+    setServerMsg("");
+    setMessageId("");
 
-    setMessageId(id);
-    setSent(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: values.name.trim(),
+          email: values.email.trim(),
+          message: values.message.trim(),
+          website: values.website, // honeypot
+        }),
+      });
 
-    setValues({ nombre: "", correo: "", celular: "", mensaje: "" });
+      const data = (await res.json().catch(() => ({}))) as any;
 
-    window.setTimeout(() => setSent(false), 15000);
+      if (!res.ok || !data?.ok) {
+        setStatus("error");
+        setServerMsg(
+          data?.error?.message || data?.error || "Something went wrong. Please try again."
+        );
+        return;
+      }
+
+      setStatus("sent");
+      setMessageId(data?.id || "");
+      setValues({ name: "", email: "", message: "", website: "" });
+
+      window.setTimeout(() => setStatus("idle"), 15000);
+    } catch {
+      setStatus("error");
+      setServerMsg("Network error. Please try again.");
+    }
   };
 
   // NOTE: button classes are intentionally inverted to match the CRA styling:
+  // - Light theme uses the "IsDark" button class (black button on white background)
+  // - Dark theme uses the "normal" button class (white button on black background)
   const activeButtonClass = isDark ? "inputContainer__button" : "inputContainer__buttonIsDark";
   const disabledButtonClass = isDark
     ? "inputContainer__buttonIsDark--disabled"
     : "inputContainer__button--disabled";
 
+  const canSend = isValid && status !== "sending";
+
   return (
     <div className={isDark ? "contactContainer__isDark" : "contactContainer"}>
-      <div className="contactContainer__form" data-aos="fade-down">
+      {/* Removed AOS: fade handled by CSS on route-load */}
+      <div className="contactContainer__form">
         <h1>CONTACT</h1>
         <SocialMedia />
 
-        <h4>
-          Want to collaborate or talk about an opportunity? Send me a message using the
-          form below.
-        </h4>
+        <h4>Want to collaborate or just say hi? Send me a message and I’ll get back to you.</h4>
 
         <div className="inputContainer">
           <form onSubmit={onSubmit}>
-            <div className={eachClass}>
-              <label htmlFor="nombre">Name</label>
+            {/* honeypot (hidden via CSS) */}
+            <div className="inputContainer__honeypot">
+              <label htmlFor="website">Website</label>
               <input
-                id="nombre"
-                value={values.nombre}
-                onChange={onChange("nombre")}
-                onBlur={onBlur("nombre")}
+                id="website"
+                value={values.website}
+                onChange={onChange("website")}
+                onBlur={onBlur("website")}
                 type="text"
+                autoComplete="off"
+                tabIndex={-1}
               />
             </div>
-            {touched.nombre && errors.nombre ? (
-              <div className="inputContainer__each--error">{errors.nombre}</div>
+
+            <div className={eachClass}>
+              <label htmlFor="name">Name</label>
+              <input
+                id="name"
+                value={values.name}
+                onChange={onChange("name")}
+                onBlur={onBlur("name")}
+                type="text"
+                autoComplete="name"
+              />
+            </div>
+            {touched.name && errors.name ? (
+              <div className="inputContainer__each--error">{errors.name}</div>
             ) : null}
 
             <div className={eachClass}>
-              <label htmlFor="correo">Email</label>
+              <label htmlFor="email">Email</label>
               <input
-                id="correo"
-                value={values.correo}
-                onChange={onChange("correo")}
-                onBlur={onBlur("correo")}
+                id="email"
+                value={values.email}
+                onChange={onChange("email")}
+                onBlur={onBlur("email")}
                 type="email"
+                autoComplete="email"
               />
             </div>
-            {touched.correo && errors.correo ? (
-              <div className="inputContainer__each--error">{errors.correo}</div>
+            {touched.email && errors.email ? (
+              <div className="inputContainer__each--error">{errors.email}</div>
             ) : null}
 
             <div className={eachClass}>
-              <label htmlFor="celular">Phone</label>
-              <input
-                id="celular"
-                value={values.celular}
-                onChange={onChange("celular")}
-                onBlur={onBlur("celular")}
-                type="text"
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                value={values.message}
+                onChange={onChange("message")}
+                onBlur={onBlur("message")}
+                maxLength={2000}
               />
             </div>
-            {touched.celular && errors.celular ? (
-              <div className="inputContainer__each--error">{errors.celular}</div>
+            {touched.message && errors.message ? (
+              <div className="inputContainer__each--error">{errors.message}</div>
             ) : null}
 
-            <div className={eachClass}>
-              <label htmlFor="mensaje">Message</label>
-              <input
-                id="mensaje"
-                value={values.mensaje}
-                onChange={onChange("mensaje")}
-                onBlur={onBlur("mensaje")}
-                type="text"
-                maxLength={100}
-              />
-            </div>
-            {touched.mensaje && errors.mensaje ? (
-              <div className="inputContainer__each--error">{errors.mensaje}</div>
-            ) : null}
-
-            <button className={isValid ? activeButtonClass : disabledButtonClass} type="submit">
-              Send message
+            <button
+              className={canSend ? activeButtonClass : disabledButtonClass}
+              type="submit"
+              disabled={!canSend}
+            >
+              {status === "sending" ? "Sending..." : "Send message"}
             </button>
 
-            {sent ? (
+            {status === "sent" ? (
               <div className="inputContainer__successAlert">
-                Message sent! Reference: {messageId}
+                Thanks — message sent{messageId ? ` (id: ${messageId})` : ""}.
               </div>
             ) : null}
+
+            {status === "error" ? (
+              <div className="inputContainer__errorAlert">{serverMsg}</div>
+            ) : null}
+
+            <div className="inputContainer__fallback">
+              Or email me directly: <a href="mailto:svittordev@gmail.com">svittordev@gmail.com</a>
+            </div>
           </form>
         </div>
       </div>
