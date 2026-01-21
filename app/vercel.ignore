@@ -1,0 +1,9 @@
+# Archives / backups (don’t ship to Vercel build context)
+*.rar
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+*.bak
+*.old
