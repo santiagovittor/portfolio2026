@@ -10,11 +10,7 @@ type ContactPayload = {
   website?: string;
 };
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-function isValidEmail(email: string) {
-  return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email);
-}
+const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
 
 function escapeHtml(input: string) {
   return input
@@ -26,22 +22,26 @@ function escapeHtml(input: string) {
 }
 
 export async function POST(req: Request) {
-  if (!process.env.RESEND_API_KEY) {
+  // IMPORTANT:
+  // Do not instantiate Resend at module scope.
+  // Next/Vercel can evaluate route modules during build (page data collection).
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.CONTACT_TO_EMAIL;
+  const from = process.env.CONTACT_FROM_EMAIL || "Portfolio <onboarding@resend.dev>";
+
+  if (!apiKey) {
     return Response.json(
       { ok: false, error: "Server misconfigured: missing RESEND_API_KEY." },
       { status: 500 }
     );
   }
 
-  if (!process.env.CONTACT_TO_EMAIL) {
+  if (!to) {
     return Response.json(
       { ok: false, error: "Server misconfigured: missing CONTACT_TO_EMAIL." },
       { status: 500 }
     );
   }
-
-  const from = process.env.CONTACT_FROM_EMAIL || "Portfolio <onboarding@resend.dev>";
-  const to = process.env.CONTACT_TO_EMAIL;
 
   let body: ContactPayload;
   try {
@@ -64,9 +64,11 @@ export async function POST(req: Request) {
   if (name.length < 2 || name.length > 80) {
     return Response.json({ ok: false, error: "Name must be 2–80 characters." }, { status: 400 });
   }
-  if (!isValidEmail(email) || email.length > 120) {
+
+  if (!emailRegex.test(email) || email.length > 120) {
     return Response.json({ ok: false, error: "Please enter a valid email." }, { status: 400 });
   }
+
   if (message.length < 10 || message.length > 2000) {
     return Response.json(
       { ok: false, error: "Message must be 10–2000 characters." },
@@ -103,6 +105,8 @@ export async function POST(req: Request) {
   `;
 
   try {
+    const resend = new Resend(apiKey);
+
     const { data, error } = await resend.emails.send({
       from,
       to: [to],
@@ -118,6 +122,6 @@ export async function POST(req: Request) {
 
     return Response.json({ ok: true, id: data?.id });
   } catch (err) {
-    return Response.json({ ok: false, error: err }, { status: 500 });
+    return Response.json({ ok: false, error: "Failed to send email." }, { status: 500 });
   }
 }
