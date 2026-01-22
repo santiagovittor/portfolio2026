@@ -50,6 +50,15 @@ export default function NavBar() {
         </li>
 
         <li>
+          <Link href="/assistant" aria-label="assistant">
+            <img
+              src={icon("/svgs/assistant.svg", "/svgs/assistantDark.svg")}
+              alt={isDark ? "assistant dark icon" : "assistant icon"}
+            />
+          </Link>
+        </li>
+
+        <li>
           <Link href="/contact" aria-label="contact me">
             <img
               src={icon("/svgs/contact.svg", "/svgs/contactDark.svg")}
