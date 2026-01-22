@@ -15,6 +15,10 @@ const rajdhani = Rajdhani({
 const isProd = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
+  icons: {
+  icon: "/favicon.ico",
+  apple: "/apple-touch-icon.png",
+},
   metadataBase: new URL(siteConfig.url), // makes OG/Twitter URLs resolve correctly :contentReference[oaicite:2]{index=2}
   title: {
     default: siteConfig.title,
