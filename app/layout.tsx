@@ -15,19 +15,22 @@ const rajdhani = Rajdhani({
 const isProd = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
-  icons: {
-  icon: "/favicon.ico",
-  apple: "/apple-touch-icon.png",
-},
-  metadataBase: new URL(siteConfig.url), // makes OG/Twitter URLs resolve correctly :contentReference[oaicite:2]{index=2}
+  metadataBase: new URL(siteConfig.url), // makes OG/Twitter URLs resolve correctly
   title: {
     default: siteConfig.title,
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,
+
   alternates: {
     canonical: "/",
   },
+
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+
   openGraph: {
     type: "website",
     url: siteConfig.url,
@@ -37,19 +40,21 @@ export const metadata: Metadata = {
     locale: siteConfig.locale,
     images: [
       {
-        url: "/og.png", // you already have this in /public
+        url: "/og.png",
         width: 1200,
         height: 630,
         alt: `${siteConfig.name} portfolio preview`,
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
     images: ["/og.png"],
   },
+
   robots: isProd
     ? { index: true, follow: true }
     : {
@@ -59,14 +64,14 @@ export const metadata: Metadata = {
         nocache: true,
         googleBot: { index: false, follow: false, nocache: true },
       },
-  // Paste your token later from Search Console (HTML tag method)
-  // verification: { google: "YOUR_TOKEN_HERE" }, :contentReference[oaicite:3]{index=3}
+
+  // Only needed if you choose the HTML-tag verification method (you used DNS verification, so you can ignore this)
+  // verification: { google: "YOUR_TOKEN_HERE" },
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  // JSON-LD: lightweight structured data (helps Google understand "who" this site is)
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",

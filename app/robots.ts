@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
 
   return {
     rules: isProd
-      ? [{ userAgent: "*", allow: "/" }]
+      ? [{ userAgent: "*", allow: "/", disallow: ["/api/"] }]
       : [{ userAgent: "*", disallow: "/" }], // block previews
     sitemap: `${siteConfig.url}/sitemap.xml`,
     host: siteConfig.url,
