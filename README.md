@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Santiago Vittor | Portfolio
 
-## Getting Started
+Hi, I’m Santiago Vittor 👋  
+Based in Buenos Aires, Argentina 🇦🇷
 
-First, run the development server:
+This repo contains my personal portfolio website.
+
+I build frontend-first products with React/Next.js and TypeScript, and I also like the “system side” of things: shipping features end to end, wiring APIs, tightening UX details, and making sure performance + SEO are solid.
+
+This site is a small example of that approach:
+- a clean portfolio experience with a simple data model
+- a contact system that delivers emails reliably
+- an AI assistant route that can answer questions about my background and projects (without going off the rails) 🤖
+
+## Stack
+
+- Next.js (App Router)
+- TypeScript
+- Sass
+- Vercel
+
+Extras:
+- Resend (contact emails)
+- Gemini API (assistant)
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```txt
+app/          routes (home, about, portfolio, contact, assistant)
+components/   UI components (navbar, layout, etc.)
+lib/          data + content (projects, cv, fun facts)
+styles/       global sass
+public/       images + svg icons
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Config (env)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env.local`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# contact
+RESEND_API_KEY=your_resend_key
+CONTACT_TO_EMAIL=your_email
 
-## Deploy on Vercel
+# assistant
+GEMINI_API_KEY=your_gemini_key
+GEMINI_MODEL=gemini-3-flash-preview
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Links
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Live: https://santiagovittorweb.vercel.app
+- Repo: https://github.com/santiagovittor/portfolio2026
