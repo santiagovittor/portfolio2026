@@ -11,11 +11,9 @@ type ChatMsg = {
 type Status = "idle" | "sending" | "error";
 
 const SUGGESTED: string[] = [
+  "Who is Santiago Vittor and what does he do?",
   "Which projects are most relevant for frontend roles?",
-  "Explain the Portfolio 2026 migration goals and constraints.",
-  "What tech stack is used across the projects?",
-  "Which project best shows AI-related work and why?",
-  "Give me a quick overview of Kiki Digital and its purpose.",
+  "How can I get in touch with Santiago?"
 ];
 
 export default function AssistantChat() {
@@ -25,7 +23,7 @@ export default function AssistantChat() {
     {
       role: "assistant",
       content:
-        "Hi — I can answer questions about my portfolio projects (stack, tradeoffs, links). What would you like to know?",
+        "Hi, I can answer questions about my portfolio projects (stack, tradeoffs, links). What would you like to know?",
     },
   ]);
 

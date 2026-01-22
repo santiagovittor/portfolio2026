@@ -5,7 +5,8 @@ import { projects } from "@/lib/projects";
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
-  const staticRoutes = ["", "/about", "/portfolio", "/contact", "/assistant"].map((path) => ({
+  // Only indexable static routes (keep /assistant out)
+  const staticRoutes = ["", "/about", "/portfolio", "/contact"].map((path) => ({
     url: `${siteConfig.url}${path}`,
     lastModified: now,
   }));
