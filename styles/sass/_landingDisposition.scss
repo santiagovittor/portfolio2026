@@ -45,16 +45,13 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   }
 }
 
-/* Default spotlight position (static on touch / reduced motion) */
+/* Default spotlight position */
 .hasAmbient {
   --mx: 50%;
   --my: 35%;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Ambient background ONLY on Home route (LayoutShell adds .hasAmbient)        */
-/* Stronger pointer spotlight via 2 layers: core + falloff.                    */
-/* -------------------------------------------------------------------------- */
+/* Ambient background ONLY on Home route */
 .landingDisposition.hasAmbient::before {
   content: "";
   position: fixed;
@@ -65,21 +62,8 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   transition: opacity 2s;
 
   background:
-    /* Hot core (small + brighter) */
-    radial-gradient(
-      300px 220px at var(--mx) var(--my),
-      rgba(120, 160, 255, 0.20),
-      transparent 62%
-    ),
-
-    /* Soft falloff (large + subtle) */
-    radial-gradient(
-      980px 720px at var(--mx) var(--my),
-      rgba(120, 160, 255, 0.14),
-      transparent 68%
-    ),
-
-    /* Ambient layers */
+    radial-gradient(300px 220px at var(--mx) var(--my), rgba(120, 160, 255, 0.20), transparent 62%),
+    radial-gradient(980px 720px at var(--mx) var(--my), rgba(120, 160, 255, 0.14), transparent 68%),
     radial-gradient(900px 600px at 18% 12%, rgba(90, 110, 255, 0.14), transparent 60%),
     radial-gradient(800px 550px at 82% 20%, rgba(255, 140, 80, 0.08), transparent 62%),
     radial-gradient(900px 650px at 50% 90%, rgba(0, 0, 0, 0.05), transparent 60%);
@@ -108,21 +92,8 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   transition: opacity 2s;
 
   background:
-    /* Hot core (dark: slightly stronger) */
-    radial-gradient(
-      320px 240px at var(--mx) var(--my),
-      rgba(120, 160, 255, 0.24),
-      transparent 62%
-    ),
-
-    /* Soft falloff */
-    radial-gradient(
-      1040px 780px at var(--mx) var(--my),
-      rgba(120, 160, 255, 0.16),
-      transparent 70%
-    ),
-
-    /* Ambient layers */
+    radial-gradient(320px 240px at var(--mx) var(--my), rgba(120, 160, 255, 0.24), transparent 62%),
+    radial-gradient(1040px 780px at var(--mx) var(--my), rgba(120, 160, 255, 0.16), transparent 70%),
     radial-gradient(950px 650px at 18% 12%, rgba(120, 160, 255, 0.18), transparent 62%),
     radial-gradient(800px 600px at 78% 25%, rgba(255, 120, 90, 0.12), transparent 60%),
     radial-gradient(900px 650px at 50% 90%, rgba(255, 255, 255, 0.06), transparent 60%);
@@ -139,16 +110,6 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   background-image: url("#{$noise-svg}");
   background-repeat: repeat;
   mix-blend-mode: screen;
-}
-
-/* Make movement feel more responsive (less trailing) on real cursors */
-@media (hover: hover) and (pointer: fine) {
-  .landingDisposition.hasAmbient::before,
-  .landingDisposition__isDark.hasAmbient::before {
-    // We don't animate the gradient itself (it can't interpolate),
-    // but this helps reduce perceived lag on other changes.
-    will-change: transform;
-  }
 }
 
 .mainTextContainer {
@@ -181,6 +142,7 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
 /* Hero polish */
 .mainTextContainer,
 .mainTextContainer__isDark {
+  position: relative; /* for mobile pseudo elements + CTA positioning */
   padding-inline: clamp(1.25rem, 4vw, 4rem);
   row-gap: clamp(0.35rem, 1.2vw, 0.9rem);
   text-rendering: geometricPrecision;
@@ -260,6 +222,12 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   }
 }
 
+/* Global default: hide bottom CTA (desktop/tablet) */
+.heroBottomCta {
+  display: none;
+}
+
+/* Corner Github (kept) */
 .cornerGithubContainer{
   position: absolute;
   width: 0;
@@ -314,7 +282,7 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
   }
 }
 
-/* Mobile hero upgrade */
+/* Mobile hero upgrade + softer panel (NO hard outline) */
 @media only screen and (max-width: 768px) {
   .landingDisposition,.landingDisposition__isDark {
     grid-template-columns: 1fr;
@@ -332,8 +300,9 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
     place-content: center;
     align-content: center;
     justify-items: center;
+
     padding-top: 1rem;
-    padding-bottom: 3rem;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 
     .heroKicker {
       font-size: clamp(1.05rem, 3.2vw, 1.4rem);
@@ -347,34 +316,54 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
       padding-bottom: 0.5rem;
 
       &::after {
-        width: min(360px, 78vw);
+        width: min(22.5rem, 78vw);
         opacity: 0.22;
       }
     }
 
+    /* ✅ Panel surface: no border line, use “material” (shadow + inset sheen + internal gradient) */
     &::before {
       content: "";
       position: absolute;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -46%);
-      width: min(520px, 92vw);
-      height: min(280px, 44vh);
-      border-radius: 24px;
+      width: min(32.5rem, 92vw);
+      height: min(17.5rem, 44vh);
+      border-radius: 1.5rem;
       pointer-events: none;
       z-index: 0;
 
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.08);
+      /* Internal gradient makes edges blend (no hard rectangle) */
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0.04) 100%),
+        rgba(255, 255, 255, 0.22);
+
+      /* Soft depth + subtle “top highlight” via inset shadow */
+      box-shadow:
+        0 1.5rem 5rem rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
     }
 
     @supports (backdrop-filter: blur(10px)) {
       &::before {
-        background: rgba(255, 255, 255, 0.38);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
       }
+    }
+
+    /* Bottom vignette */
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 34vh;
+      pointer-events: none;
+      z-index: 0;
+      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.22));
+      opacity: 0.55;
     }
 
     > * {
@@ -383,18 +372,80 @@ $noise-svg: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg
     }
   }
 
+  /* Dark: same idea, different material values */
   .mainTextContainer__isDark {
     &::before {
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
+      background:
+        radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02) 55%, rgba(0, 0, 0, 0.10) 100%),
+        rgba(0, 0, 0, 0.22);
+
+      box-shadow:
+        0 1.75rem 5.625rem rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
-    @supports (backdrop-filter: blur(10px)) {
-      &::before {
-        background: rgba(0, 0, 0, 0.22);
-      }
+    &::after {
+      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.60));
+      opacity: 0.65;
     }
+  }
+
+  /* CTA on mobile only */
+  .mainTextContainer .heroBottomCta,
+  .mainTextContainer__isDark .heroBottomCta {
+    display: inline-flex;
+    position: absolute;
+    left: 50%;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 2;
+
+    align-items: center;
+    gap: 0.6rem;
+
+    padding: 0.65rem 0.95rem;
+    border-radius: 999rem;
+    text-decoration: none;
+
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    font-size: 0.82rem;
+
+    background: rgba(0, 0, 0, 0.30);
+    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    box-shadow: 0 1.125rem 3.75rem rgba(0, 0, 0, 0.35);
+    transition: transform 180ms ease, opacity 180ms ease;
+  }
+
+  .heroBottomCta__arrow {
+    opacity: 0.85;
+    transform: translateY(0);
+    animation: heroDownPulse 2.2s ease-in-out infinite;
+  }
+
+  @keyframes heroDownPulse {
+    0% { transform: translateY(0); opacity: 0.55; }
+    50% { transform: translateY(0.25rem); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.55; }
+  }
+
+  /* Light theme CTA variant */
+  .mainTextContainer .heroBottomCta {
+    background: rgba(255, 255, 255, 0.55);
+    color: rgba(0, 0, 0, 0.78);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    box-shadow: 0 1.125rem 3.75rem rgba(0, 0, 0, 0.12);
+  }
+
+  .mainTextContainer .heroBottomCta__arrow {
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .heroBottomCta__arrow { animation: none; }
   }
 
   .cornerGithubContainer,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
 import CornerGithub from "./CornerGithub";
 
@@ -9,7 +10,6 @@ export default function Hero() {
   const { isDark } = useTheme();
 
   useEffect(() => {
-    // Respect reduced motion: keep a stable title for users who prefer less animation.
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
@@ -48,6 +48,14 @@ export default function Hero() {
           </span>
         </span>
       </h1>
+
+      {/* Mobile-only anchor (CSS will hide it on desktop) */}
+      <Link className="heroBottomCta" href="/portfolio" aria-label="View selected work">
+        <span className="heroBottomCta__label">Selected work</span>
+        <span className="heroBottomCta__arrow" aria-hidden="true">
+          ↓
+        </span>
+      </Link>
     </div>
   );
 }
