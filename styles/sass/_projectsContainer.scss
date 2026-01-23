@@ -2,56 +2,109 @@ $fancyBoxShadow: 0px 12px 18px -6px rgba(0, 0, 0, 0.3);
 $fancyBoxShadowDark: 0px 12px 18px -6px rgb(114, 113, 113);
 
 .portfolioTitle{
-    display: none;
-    justify-content: center;
-    padding-top: 5rem;
-    & h1{
-        font-size: 3rem;
-        text-transform: uppercase;
-    }
-
+  display: none;
+  justify-content: center;
+  padding-top: 5rem;
+  & h1{
+    font-size: 3rem;
+    text-transform: uppercase;
+  }
 }
 
 .projectsContainer{
-    display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  color: #181818;
+  transition: 2s;
+
+  & h2{
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 3rem;
+  }
+
+  & a{
+    text-decoration: none;
     color: #181818;
-    transition: 2s;
-    & h2{
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-align: center;
-        padding-top: 3rem;
+  }
+
+  &__box{
+    display: grid;
+    justify-content: center;
+    height: fit-content;
+    margin: 3rem;
+
+    & img{
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      filter: grayscale(1);
+
+      &:hover{
+        opacity: 0.75;
+        box-shadow: $fancyBoxShadow;
+        filter: saturate(1.5);
+        transition: 2s;
+      }
     }
-    & a{
-        text-decoration: none;
-        color: #181818;
-       
+  }
+
+  /* ✅ Bottom CTA (spans full width, doesn’t become a “tile”) */
+  &__cta{
+    grid-column: 1 / -1;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  &__ctaDivider{
+    width: min(32rem, 74vw);
+    height: 1px;
+    background: rgba(0,0,0,0.14);
+    margin-bottom: 1.25rem;
+  }
+
+  &__ctaKicker{
+    margin: 0;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.75;
+    margin-bottom: 0.75rem;
+  }
+
+  &__ctaLink{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+    font-size: 0.9rem;
+
+    padding: 0.65rem 1rem;
+    border-radius: 999rem;
+
+    background: rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.10);
+
+    transition: transform 180ms ease, opacity 180ms ease;
+
+    &:hover{
+      transform: translateY(-1px);
+      opacity: 0.9;
     }
-    &__box{
-        display: grid;
-        justify-content: center;
-        height: fit-content;
-        margin: 3rem;
-        & img{
-            width: 100%;
-            height: 100%;
-            opacity: 1;
-            filter: grayscale(1);
-            &:hover{
-                opacity: 0.75;
-                box-shadow: $fancyBoxShadow;
-                filter: saturate(1.5);
-                transition: 2s;
-            }
-        }
-        
-    }
-    &__isDark{
+  }
+
+  &__isDark{
     display: grid;
     grid-template-columns: repeat( auto-fit, minmax(250px, 1fr) );
     justify-content: center;
@@ -60,34 +113,52 @@ $fancyBoxShadowDark: 0px 12px 18px -6px rgb(114, 113, 113);
     width: 100%;
     color: white;
     transition: 2s;
+
     & h2{
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-align: center;
-        padding-top: 3rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      padding-top: 3rem;
     }
+
     & a{
-        text-decoration: none;
-        color: white;
-        
+      text-decoration: none;
+      color: white;
     }
+
     & img{
-        filter: grayscale(1);
-        &:hover{
+      filter: grayscale(1);
+
+      &:hover{
         opacity: 0.75;
         box-shadow: $fancyBoxShadowDark;
         filter: saturate(1.5);
         transition: 2s;
-}
+      }
     }
-}
-}
 
+    /* Dark theme CTA styling */
+    .projectsContainer__ctaDivider{
+      background: rgba(255,255,255,0.16);
+    }
+
+    .projectsContainer__ctaKicker{
+      opacity: 0.70;
+    }
+
+    .projectsContainer__ctaLink{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+
+      &:hover{
+        opacity: 0.92;
+      }
+    }
+  }
+}
 
 @media only screen and (max-width: 425px) {
-
-    .portfolioTitle{
-        display: grid;
-    }
-
+  .portfolioTitle{
+    display: grid;
+  }
 }

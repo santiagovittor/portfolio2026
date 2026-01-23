@@ -25,6 +25,15 @@ export default function ProjectsSection() {
           </Link>
         );
       })}
+
+      {/* Bottom CTA (spans full grid width, keeps grid intact) */}
+      <div className="projectsContainer__cta" data-aos="fade-up">
+        <div className="projectsContainer__ctaDivider" aria-hidden="true" />
+        <p className="projectsContainer__ctaKicker">Want to get in touch?</p>
+        <Link className="projectsContainer__ctaLink" href="/contact">
+          Send a message <span aria-hidden="true">→</span>
+        </Link>
+      </div>
     </div>
   );
 }
