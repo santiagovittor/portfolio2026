@@ -9,20 +9,44 @@ export default function Hero() {
   const { isDark } = useTheme();
 
   useEffect(() => {
-    const t = setTimeout(() => setSwap((v) => !v), 2500);
-    return () => clearTimeout(t);
-  }, [swap]);
+    // Respect reduced motion: keep a stable title for users who prefer less animation.
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+    if (prefersReducedMotion) return;
+
+    const id = window.setInterval(() => setSwap((v) => !v), 2500);
+    return () => window.clearInterval(id);
+  }, []);
 
   return (
     <div className={isDark ? "mainTextContainer__isDark" : "mainTextContainer"}>
       <CornerGithub />
 
-      <h1 data-aos="zoom-in" data-aos-duration="1500">
+      <h1 className="heroKicker" data-aos="fade-up" data-aos-duration="900">
         Hi, I’m
       </h1>
 
-      <h1 data-aos="zoom-out" data-aos-duration="1500">
-        {swap ? "Santiago Vittor" : "a Software Engineer"}
+      <h1
+        className="heroTitle"
+        data-aos="fade-up"
+        data-aos-duration="900"
+        data-aos-delay="100"
+      >
+        <span
+          className="heroSwap"
+          aria-label={swap ? "Santiago Vittor" : "A Software Engineer"}
+        >
+          <span className={swap ? "heroSwap__item isActive" : "heroSwap__item"}>
+            Santiago Vittor
+          </span>
+          <span
+            className={!swap ? "heroSwap__item isActive" : "heroSwap__item"}
+          >
+            a Software Engineer
+          </span>
+        </span>
       </h1>
     </div>
   );

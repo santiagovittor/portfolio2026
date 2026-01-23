@@ -5,6 +5,7 @@
   width: 100%;
   justify-content: center;
   transition: 2s;
+  min-height: 100vh;
 
   .contactContainer__form {
     display: grid;
@@ -58,15 +59,15 @@
   }
 }
 
+/* ✅ IMPORTANT: don’t override the page base background on routes */
 .contactContainer {
   color: $black;
-  background-color: white;
+  background-color: transparent; // was white
 }
 
 .contactContainer__isDark {
   color: white;
-  background-color: $black;
-  min-height: 100vh;
+  background-color: transparent; // was $black
 }
 
 .inputContainer {
