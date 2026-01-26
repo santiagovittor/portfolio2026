@@ -2,8 +2,10 @@
 import "./globals.scss";
 import { Rajdhani } from "next/font/google";
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { ThemeProvider } from "../components/ThemeProvider";
 import LayoutShell from "../components/LayoutShell";
+import Analytics from "../components/Analytics";
 import { siteConfig } from "@/lib/site";
 
 const rajdhani = Rajdhani({
@@ -15,7 +17,7 @@ const rajdhani = Rajdhani({
 const isProd = process.env.NODE_ENV === "production";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url), // makes OG/Twitter URLs resolve correctly
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.title,
     template: `%s — ${siteConfig.name}`,
@@ -27,9 +29,9 @@ export const metadata: Metadata = {
   },
 
   icons: {
-  icon: "/favicon.ico?v=2",
-  apple: "/apple-touch-icon.png",
-},
+    icon: "/favicon.ico?v=2",
+    apple: "/apple-touch-icon.png",
+  },
 
   openGraph: {
     type: "website",
@@ -58,20 +60,14 @@ export const metadata: Metadata = {
   robots: isProd
     ? { index: true, follow: true }
     : {
-        // prevents Google indexing preview deployments
         index: false,
         follow: false,
         nocache: true,
         googleBot: { index: false, follow: false, nocache: true },
       },
-
-  // Only needed if you choose the HTML-tag verification method (you used DNS verification, so you can ignore this)
-  // verification: { google: "YOUR_TOKEN_HERE" },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -84,6 +80,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={rajdhani.variable}>
       <body>
+        {/* Marketing analytics (GA4 + Meta Pixel) */}
+        <Analytics />
+
         <ThemeProvider>
           <LayoutShell>{children}</LayoutShell>
         </ThemeProvider>
