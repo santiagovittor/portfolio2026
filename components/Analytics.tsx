@@ -1,38 +1,38 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Script from "next/script";
 
 export default function Analytics() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
+  // GA4 Measurement ID (yours: G-E3R3NDZXZD)
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
-  // Marketing-agent default: only track in production
+  // Meta Pixel ID is NUMERIC (optional). Example: 123456789012345
+  const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
+  // Don’t track in dev/preview unless you explicitly want to.
   const isProd = process.env.NODE_ENV === "production";
   if (!isProd) return null;
 
-  // Fire PageViews on route changes (App Router)
+  // SPA page views on route change
   useEffect(() => {
-    const qs = searchParams?.toString();
-    const url = pathname + (qs ? `?${qs}` : "");
+    const pagePath = pathname + (typeof window !== "undefined" ? window.location.search : "");
 
-    if (GA_ID && typeof window !== "undefined" && window.gtag) {
-      // Send explicit SPA page_view (avoids double counting when send_page_view:false)
-      window.gtag("event", "page_view", { page_path: url });
+    if (GA_ID && typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", "page_view", { page_path: pagePath });
     }
 
-    if (PIXEL_ID && typeof window !== "undefined" && window.fbq) {
+    if (META_PIXEL_ID && typeof window !== "undefined" && typeof window.fbq === "function") {
       window.fbq("track", "PageView");
     }
-  }, [pathname, searchParams, GA_ID, PIXEL_ID]);
+  }, [pathname, GA_ID, META_PIXEL_ID]);
 
   return (
     <>
-      {/* Google Analytics 4 */}
+      {/* GA4 */}
       {GA_ID ? (
         <>
           <Script
@@ -42,8 +42,8 @@ export default function Analytics() {
           <Script id="ga4-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              window.gtag = gtag;
+              function gtag(){window.dataLayer.push(arguments);}
+              window.gtag = window.gtag || gtag;
               gtag('js', new Date());
               gtag('config', '${GA_ID}', { send_page_view: false });
             `}
@@ -51,8 +51,8 @@ export default function Analytics() {
         </>
       ) : null}
 
-      {/* Meta / Facebook Pixel */}
-      {PIXEL_ID ? (
+      {/* Meta Pixel (optional) */}
+      {META_PIXEL_ID ? (
         <>
           <Script id="meta-pixel-init" strategy="afterInteractive">
             {`
@@ -64,7 +64,7 @@ export default function Analytics() {
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '${PIXEL_ID}');
+              fbq('init', '${META_PIXEL_ID}');
               fbq('track', 'PageView');
             `}
           </Script>
@@ -74,7 +74,7 @@ export default function Analytics() {
               height="1"
               width="1"
               style={{ display: "none" }}
-              src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
               alt=""
             />
           </noscript>

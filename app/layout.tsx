@@ -3,10 +3,14 @@ import "./globals.scss";
 import { Rajdhani } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+
 import { ThemeProvider } from "../components/ThemeProvider";
 import LayoutShell from "../components/LayoutShell";
 import Analytics from "../components/Analytics";
-import { siteConfig } from "@/lib/site";
+
+// IMPORTANT: keep this import style consistent with your repo.
+// If your project already supports @/ alias, you can switch back to: import { siteConfig } from "@/lib/site";
+import { siteConfig } from "../lib/site";
 
 const rajdhani = Rajdhani({
   subsets: ["latin"],
@@ -23,16 +27,13 @@ export const metadata: Metadata = {
     template: `%s — ${siteConfig.name}`,
   },
   description: siteConfig.description,
-
   alternates: {
     canonical: "/",
   },
-
   icons: {
     icon: "/favicon.ico?v=2",
     apple: "/apple-touch-icon.png",
   },
-
   openGraph: {
     type: "website",
     url: siteConfig.url,
@@ -49,14 +50,12 @@ export const metadata: Metadata = {
       },
     ],
   },
-
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
     images: ["/og.png"],
   },
-
   robots: isProd
     ? { index: true, follow: true }
     : {
@@ -80,7 +79,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={rajdhani.variable}>
       <body>
-        {/* Marketing analytics (GA4 + Meta Pixel) */}
+        {/* Analytics trackers (GA4 + optional Meta Pixel) */}
         <Analytics />
 
         <ThemeProvider>
