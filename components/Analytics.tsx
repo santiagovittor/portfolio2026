@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Script from "next/script";
 
 /**
@@ -13,10 +13,10 @@ import Script from "next/script";
  * Notes:
  * - Runs only in production by default (avoids polluting dev/preview).
  * - Tracks SPA route changes as page views.
+ * - IMPORTANT: No useSearchParams() (avoids Next prerender /404 suspense error).
  */
 export default function Analytics() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
@@ -26,15 +26,15 @@ export default function Analytics() {
 
   if (!isProd) return null;
 
-  // SPA page views on route changes (skip the first run; GA/Pixel handle initial load)
+  // SPA page views on route changes (skip first run; initial load is counted by config)
   useEffect(() => {
     if (!didInit.current) {
       didInit.current = true;
       return;
     }
 
-    const qs = searchParams?.toString();
-    const pagePath = pathname + (qs ? `?${qs}` : "");
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    const pagePath = pathname + search;
 
     if (GA_ID && typeof window !== "undefined" && typeof window.gtag === "function") {
       window.gtag("event", "page_view", { page_path: pagePath });
@@ -43,7 +43,7 @@ export default function Analytics() {
     if (META_PIXEL_ID && typeof window !== "undefined" && typeof window.fbq === "function") {
       window.fbq("track", "PageView");
     }
-  }, [pathname, searchParams, GA_ID, META_PIXEL_ID]);
+  }, [pathname, GA_ID, META_PIXEL_ID]);
 
   return (
     <>
@@ -60,7 +60,7 @@ export default function Analytics() {
               function gtag(){window.dataLayer.push(arguments);}
               window.gtag = window.gtag || gtag;
               gtag('js', new Date());
-              // send_page_view=true (default) so the first load is counted.
+              // Default send_page_view=true -> counts initial load.
               gtag('config', '${GA_ID}');
             `}
           </Script>

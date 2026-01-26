@@ -3,6 +3,7 @@ import "./globals.scss";
 import { Rajdhani } from "next/font/google";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Suspense } from "react";
 
 import { ThemeProvider } from "../components/ThemeProvider";
 import LayoutShell from "../components/LayoutShell";
@@ -83,7 +84,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={rajdhani.variable}>
       <body>
-        <Analytics />
+        {/* Extra-safe boundary for any client-only analytics behavior */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
 
         <ThemeProvider>
           <CustomCursor />
