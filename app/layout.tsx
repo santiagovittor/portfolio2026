@@ -7,7 +7,9 @@ import type { ReactNode } from "react";
 import { ThemeProvider } from "../components/ThemeProvider";
 import LayoutShell from "../components/LayoutShell";
 import Analytics from "../components/Analytics";
-import { siteConfig } from "../lib/site";
+import SmokeOverlay from "../components/SmokeOverlay";
+import CustomCursor from "../components/CustomCursor";
+import { siteConfig } from "@/lib/site";
 
 const rajdhani = Rajdhani({
   subsets: ["latin"],
@@ -84,6 +86,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Analytics />
 
         <ThemeProvider>
+          <CustomCursor />
+          <SmokeOverlay />
           <LayoutShell>{children}</LayoutShell>
         </ThemeProvider>
 

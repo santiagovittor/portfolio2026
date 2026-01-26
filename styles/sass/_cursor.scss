@@ -1,0 +1,122 @@
+/* Custom cursor (desktop only) */
+@media (pointer: fine) {
+  body.hasCustomCursor {
+    cursor: none;
+  }
+
+  /* Keep native cursor for text fields (so it’s usable) */
+  body.hasCustomCursor input,
+  body.hasCustomCursor textarea,
+  body.hasCustomCursor select,
+  body.hasCustomCursor [contenteditable="true"] {
+    cursor: text !important;
+  }
+
+  /* For safety: when user requests native cursor via data attribute */
+  [data-cursor="native"] {
+    cursor: auto !important;
+  }
+
+  .customCursor {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+
+    /* Theme vars injected inline by the component */
+    --cursor-dot: rgba(235, 245, 255, 0.92);
+    --cursor-ring: rgba(235, 245, 255, 0.48);
+    --cursor-ring2: rgba(235, 245, 255, 0.18);
+
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+
+  .customCursor.isVisible {
+    opacity: 1;
+  }
+
+  .customCursor.isHidden {
+    opacity: 0; /* hide our cursor on inputs, native cursor shows */
+  }
+
+  .customCursor__dot,
+  .customCursor__ring,
+  .customCursor__ring2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity, width, height;
+  }
+
+  .customCursor__dot {
+    width: 0.45rem;  /* ~7px */
+    height: 0.45rem;
+    margin-left: -0.225rem;
+    margin-top: -0.225rem;
+    border-radius: 999px;
+    background: var(--cursor-dot);
+    filter: blur(0.15px);
+    opacity: 0.95;
+    transition: transform 120ms ease, opacity 120ms ease;
+  }
+
+  .customCursor__ring {
+    width: 2.25rem;  /* ~36px */
+    height: 2.25rem;
+    margin-left: -1.125rem;
+    margin-top: -1.125rem;
+    border-radius: 999px;
+    border: 1px solid var(--cursor-ring);
+    opacity: 0.9;
+    transition: transform 200ms ease, opacity 200ms ease, width 200ms ease, height 200ms ease;
+  }
+
+  .customCursor__ring2 {
+    width: 3.6rem;   /* ~58px */
+    height: 3.6rem;
+    margin-left: -1.8rem;
+    margin-top: -1.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--cursor-ring2);
+    opacity: 0.0;
+    transform: translate3d(0, 0, 0) scale(0.96);
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+
+  /* Hover state on links/buttons */
+  .customCursor.isHover .customCursor__ring {
+    transform: translate3d(0, 0, 0) scale(1.18);
+    opacity: 1;
+  }
+
+  .customCursor.isHover .customCursor__ring2 {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.0);
+  }
+
+  /* Click pulse */
+  .customCursor.isDown .customCursor__dot {
+    transform: translate3d(0, 0, 0) scale(0.82);
+    opacity: 0.9;
+  }
+
+  .customCursor.isDown .customCursor__ring2 {
+    opacity: 1;
+    animation: cursorPulse 420ms ease-out 1;
+  }
+
+  @keyframes cursorPulse {
+    0%   { transform: translate3d(0,0,0) scale(0.95); opacity: 0.9; }
+    60%  { transform: translate3d(0,0,0) scale(1.12); opacity: 0.35; }
+    100% { transform: translate3d(0,0,0) scale(1.25); opacity: 0.0; }
+  }
+}
+
+/* If user prefers reduced motion: keep native cursor (component already no-ops) */
+@media (prefers-reduced-motion: reduce) {
+  body.hasCustomCursor {
+    cursor: auto;
+  }
+}
