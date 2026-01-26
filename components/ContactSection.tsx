@@ -1,15 +1,16 @@
+// components/ContactSection.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useTheme } from "./ThemeProvider";
 import SocialMedia from "./SocialMedia";
+import { trackEvent, trackLead, trackOutboundClick } from "../lib/analytics";
 
 type Values = {
   name: string;
   email: string;
   message: string;
-  // honeypot
-  website: string;
+  website: string; // honeypot
 };
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -58,12 +59,10 @@ export default function ContactSection() {
   }, [values]);
 
   const isValid = Object.keys(errors).length === 0;
-
   const eachClass = isDark ? "inputContainer__each--isDark" : "inputContainer__each";
 
   const onChange =
-    (key: keyof Values) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (key: keyof Values) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setValues((v) => ({ ...v, [key]: e.target.value }));
     };
 
@@ -71,16 +70,10 @@ export default function ContactSection() {
     setTouched((t) => ({ ...t, [key]: true }));
   };
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    setTouched({
-      name: true,
-      email: true,
-      message: true,
-      website: true,
-    });
-
+    setTouched({ name: true, email: true, message: true, website: true });
     if (!isValid || status === "sending") return;
 
     setStatus("sending");
@@ -103,15 +96,18 @@ export default function ContactSection() {
 
       if (!res.ok || !data?.ok) {
         setStatus("error");
-        setServerMsg(
-          data?.error?.message || data?.error || "Something went wrong. Please try again."
-        );
+        setServerMsg(data?.error?.message || data?.error || "Something went wrong. Please try again.");
         return;
       }
 
       setStatus("sent");
       setMessageId(data?.id || "");
       setValues({ name: "", email: "", message: "", website: "" });
+
+      // ✅ Conversion tracking
+      const id = data?.id || "";
+      trackLead({ method: "contact_form", id }); // GA: generate_lead, Pixel: Lead
+      trackEvent("contact_submit", { id });      // extra event for reporting
 
       window.setTimeout(() => setStatus("idle"), 15000);
     } catch {
@@ -120,9 +116,7 @@ export default function ContactSection() {
     }
   };
 
-  // NOTE: button classes are intentionally inverted to match the CRA styling:
-  // - Light theme uses the "IsDark" button class (black button on white background)
-  // - Dark theme uses the "normal" button class (white button on black background)
+  // Button classes intentionally inverted (your note kept)
   const activeButtonClass = isDark ? "inputContainer__button" : "inputContainer__buttonIsDark";
   const disabledButtonClass = isDark
     ? "inputContainer__buttonIsDark--disabled"
@@ -130,9 +124,16 @@ export default function ContactSection() {
 
   const canSend = isValid && status !== "sending";
 
+  const emailAddress = "svittordev@gmail.com";
+  const mailtoUrl = `mailto:${emailAddress}`;
+
+  const onEmailClick = () => {
+    trackEvent("contact_email_click", { location: "contact_fallback" });
+    trackOutboundClick({ url: mailtoUrl, label: "Email", location: "contact_fallback" });
+  };
+
   return (
     <div className={isDark ? "contactContainer__isDark" : "contactContainer"}>
-      {/* Removed AOS: fade handled by CSS on route-load */}
       <div className="contactContainer__form">
         <h1>CONTACT</h1>
         <SocialMedia />
@@ -141,7 +142,6 @@ export default function ContactSection() {
 
         <div className="inputContainer">
           <form onSubmit={onSubmit}>
-            {/* honeypot (hidden via CSS) */}
             <div className="inputContainer__honeypot">
               <label htmlFor="website">Website</label>
               <input
@@ -218,7 +218,10 @@ export default function ContactSection() {
             ) : null}
 
             <div className="inputContainer__fallback">
-              Or email me directly: <a href="mailto:svittordev@gmail.com">svittordev@gmail.com</a>
+              Or email me directly:{" "}
+              <a href={mailtoUrl} onClick={onEmailClick}>
+                {emailAddress}
+              </a>
             </div>
           </form>
         </div>

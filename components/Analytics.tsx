@@ -1,25 +1,40 @@
+// components/Analytics.tsx
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import Script from "next/script";
 
+/**
+ * Loads common marketing trackers:
+ * - Google Analytics 4 (gtag)
+ * - Meta Pixel (optional)
+ *
+ * Notes:
+ * - Runs only in production by default (avoids polluting dev/preview).
+ * - Tracks SPA route changes as page views.
+ */
 export default function Analytics() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // GA4 Measurement ID (yours: G-E3R3NDZXZD)
   const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-
-  // Meta Pixel ID is NUMERIC (optional). Example: 123456789012345
   const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
-  // Don’t track in dev/preview unless you explicitly want to.
   const isProd = process.env.NODE_ENV === "production";
+  const didInit = useRef(false);
+
   if (!isProd) return null;
 
-  // SPA page views on route change
+  // SPA page views on route changes (skip the first run; GA/Pixel handle initial load)
   useEffect(() => {
-    const pagePath = pathname + (typeof window !== "undefined" ? window.location.search : "");
+    if (!didInit.current) {
+      didInit.current = true;
+      return;
+    }
+
+    const qs = searchParams?.toString();
+    const pagePath = pathname + (qs ? `?${qs}` : "");
 
     if (GA_ID && typeof window !== "undefined" && typeof window.gtag === "function") {
       window.gtag("event", "page_view", { page_path: pagePath });
@@ -28,11 +43,11 @@ export default function Analytics() {
     if (META_PIXEL_ID && typeof window !== "undefined" && typeof window.fbq === "function") {
       window.fbq("track", "PageView");
     }
-  }, [pathname, GA_ID, META_PIXEL_ID]);
+  }, [pathname, searchParams, GA_ID, META_PIXEL_ID]);
 
   return (
     <>
-      {/* GA4 */}
+      {/* Google Analytics 4 */}
       {GA_ID ? (
         <>
           <Script
@@ -45,7 +60,8 @@ export default function Analytics() {
               function gtag(){window.dataLayer.push(arguments);}
               window.gtag = window.gtag || gtag;
               gtag('js', new Date());
-              gtag('config', '${GA_ID}', { send_page_view: false });
+              // send_page_view=true (default) so the first load is counted.
+              gtag('config', '${GA_ID}');
             `}
           </Script>
         </>
@@ -54,7 +70,7 @@ export default function Analytics() {
       {/* Meta Pixel (optional) */}
       {META_PIXEL_ID ? (
         <>
-          <Script id="meta-pixel-init" strategy="afterInteractive">
+          <Script id="meta-pixel" strategy="afterInteractive">
             {`
               !function(f,b,e,v,n,t,s)
               {if(f.fbq)return;n=f.fbq=function(){n.callMethod?

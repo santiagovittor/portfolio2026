@@ -1,3 +1,4 @@
+// types/analytics.d.ts
 export {};
 
 declare global {
