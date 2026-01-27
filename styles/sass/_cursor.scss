@@ -1,19 +1,27 @@
 /* Custom cursor (desktop only) */
 @media (pointer: fine) {
+  /* Hide native cursor everywhere when custom cursor is enabled */
   body.hasCustomCursor {
-    cursor: none;
+    cursor: none !important;
+  }
+
+  /* This prevents <a>, <button>, etc from bringing back the pointer/hand cursor */
+  body.hasCustomCursor * {
+    cursor: none !important;
   }
 
   /* Keep native cursor for text fields (so it’s usable) */
   body.hasCustomCursor input,
   body.hasCustomCursor textarea,
   body.hasCustomCursor select,
-  body.hasCustomCursor [contenteditable="true"] {
+  body.hasCustomCursor [contenteditable="true"],
+  body.hasCustomCursor [data-cursor="text"] {
     cursor: text !important;
   }
 
-  /* For safety: when user requests native cursor via data attribute */
-  [data-cursor="native"] {
+  /* If you explicitly want native cursor in a zone (optional escape hatch) */
+  body.hasCustomCursor [data-cursor="native"],
+  body.hasCustomCursor [data-cursor="native"] * {
     cursor: auto !important;
   }
 
@@ -51,7 +59,7 @@
   }
 
   .customCursor__dot {
-    width: 0.45rem;  /* ~7px */
+    width: 0.45rem; /* ~7px */
     height: 0.45rem;
     margin-left: -0.225rem;
     margin-top: -0.225rem;
@@ -63,7 +71,7 @@
   }
 
   .customCursor__ring {
-    width: 2.25rem;  /* ~36px */
+    width: 2.25rem; /* ~36px */
     height: 2.25rem;
     margin-left: -1.125rem;
     margin-top: -1.125rem;
@@ -74,7 +82,7 @@
   }
 
   .customCursor__ring2 {
-    width: 3.6rem;   /* ~58px */
+    width: 3.6rem; /* ~58px */
     height: 3.6rem;
     margin-left: -1.8rem;
     margin-top: -1.8rem;
@@ -108,15 +116,27 @@
   }
 
   @keyframes cursorPulse {
-    0%   { transform: translate3d(0,0,0) scale(0.95); opacity: 0.9; }
-    60%  { transform: translate3d(0,0,0) scale(1.12); opacity: 0.35; }
-    100% { transform: translate3d(0,0,0) scale(1.25); opacity: 0.0; }
+    0% {
+      transform: translate3d(0, 0, 0) scale(0.95);
+      opacity: 0.9;
+    }
+    60% {
+      transform: translate3d(0, 0, 0) scale(1.12);
+      opacity: 0.35;
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1.25);
+      opacity: 0;
+    }
   }
 }
 
 /* If user prefers reduced motion: keep native cursor (component already no-ops) */
 @media (prefers-reduced-motion: reduce) {
   body.hasCustomCursor {
-    cursor: auto;
+    cursor: auto !important;
+  }
+  body.hasCustomCursor * {
+    cursor: auto !important;
   }
 }

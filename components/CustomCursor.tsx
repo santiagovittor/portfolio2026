@@ -23,45 +23,50 @@ export default function CustomCursor() {
   const dotPos = useRef({ x: 0, y: 0 });
   const ringPos = useRef({ x: 0, y: 0 });
 
+  // Cursor velocity (for a subtle “lead”)
+  const vel = useRef({ x: 0, y: 0, lastX: 0, lastY: 0, lastT: 0 });
+
   const [isVisible, setIsVisible] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isDown, setIsDown] = useState(false);
 
   useEffect(() => {
-    // Respect reduced motion
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (reduceMotion.matches) return;
 
-    // Desktop only (fine pointer)
     const finePointer = window.matchMedia("(pointer: fine)");
     if (!finePointer.matches) return;
 
-    // Enable class that hides the native cursor globally (except inputs via CSS)
     document.body.classList.add("hasCustomCursor");
 
     const onMove = (e: MouseEvent) => {
+      const now = performance.now();
+
       target.current.x = e.clientX;
       target.current.y = e.clientY;
 
       if (!isVisible) setIsVisible(true);
 
-      // Detect hover targets
-      const el = document.elementFromPoint(e.clientX, e.clientY) as Element | null;
+      // velocity estimate
+      const v = vel.current;
+      const dt = v.lastT ? Math.max(8, now - v.lastT) : 16;
+      v.x = (e.clientX - v.lastX) / dt;
+      v.y = (e.clientY - v.lastY) / dt;
+      v.lastX = e.clientX;
+      v.lastY = e.clientY;
+      v.lastT = now;
 
-      // If user wants native cursor somewhere:
+      // hover detection
+      const el = document.elementFromPoint(e.clientX, e.clientY) as Element | null;
       const wantsNative = !!el?.closest?.('[data-cursor="native"]');
 
       const isTextField =
         wantsNative ||
-        !!el?.closest?.(
-          'input, textarea, select, [contenteditable="true"], [data-cursor="text"]'
-        );
+        !!el?.closest?.('input, textarea, select, [contenteditable="true"], [data-cursor="text"]');
 
       const interactive =
-        !!el?.closest?.(
-          'a, button, [role="button"], [data-cursor="hover"], summary'
-        ) && !isTextField;
+        !!el?.closest?.('a, button, [role="button"], [data-cursor="hover"], summary') && !isTextField;
 
       setIsHover(interactive);
       setIsHidden(isTextField);
@@ -82,13 +87,25 @@ export default function CustomCursor() {
       const tx = target.current.x;
       const ty = target.current.y;
 
-      // Dot follows faster
-      dotPos.current.x += (tx - dotPos.current.x) * 0.35;
-      dotPos.current.y += (ty - dotPos.current.y) * 0.35;
+      // Keep rings premium/inertial
+      const ringEase = 0.18;
 
-      // Ring follows slower (premium inertia)
-      ringPos.current.x += (tx - ringPos.current.x) * 0.18;
-      ringPos.current.y += (ty - ringPos.current.y) * 0.18;
+      // Make dot snappier
+      const dotEase = 0.7; // was 0.35
+
+      // Subtle “lead” for dot (feels responsive, not laggy)
+      // clamp so it never jumps too much
+      const leadX = clamp(vel.current.x * 18, -10, 10);
+      const leadY = clamp(vel.current.y * 18, -10, 10);
+
+      const dotTargetX = tx + leadX;
+      const dotTargetY = ty + leadY;
+
+      dotPos.current.x += (dotTargetX - dotPos.current.x) * dotEase;
+      dotPos.current.y += (dotTargetY - dotPos.current.y) * dotEase;
+
+      ringPos.current.x += (tx - ringPos.current.x) * ringEase;
+      ringPos.current.y += (ty - ringPos.current.y) * ringEase;
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${dotPos.current.x}px, ${dotPos.current.y}px, 0)`;
@@ -120,9 +137,7 @@ export default function CustomCursor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  // Theme-aware colors (avoid mix-blend hacks; keep readable)
   const styleVars: React.CSSProperties = {
-    // Dark: light cursor; Light: darker cursor
     ["--cursor-dot" as any]: isDark ? "rgba(235,245,255,0.92)" : "rgba(20,24,35,0.88)",
     ["--cursor-ring" as any]: isDark ? "rgba(235,245,255,0.48)" : "rgba(20,24,35,0.42)",
     ["--cursor-ring2" as any]: isDark ? "rgba(235,245,255,0.18)" : "rgba(20,24,35,0.16)",
