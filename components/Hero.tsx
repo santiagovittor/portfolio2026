@@ -44,7 +44,7 @@ export default function Hero() {
           <span
             className={!swap ? "heroSwap__item isActive" : "heroSwap__item"}
           >
-            a Software Engineer
+            an AI Engineer
           </span>
         </span>
       </h1>

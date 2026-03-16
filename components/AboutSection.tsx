@@ -42,25 +42,21 @@ export default function AboutSection() {
           {tab === "actual" ? (
             <>
               <p>
-                I build clean, user-friendly web experiences with React and Next.js, and I
-                also love automation that removes busywork. At FoodStyles, I lead AI and
-                data training programs (LLMs, prompt mastery, data literacy) and build
-                internal tools and workflow automations.
+                At FoodStyles I lead AI training programs and build the tools that support them. That means designing how teams learn to work with LLMs, building RAG pipelines that non-technical people can actually maintain, and automating the workflows that slow everyone down. I also still write code, mostly JavaScript and Python, because it's hard to teach something you don't do yourself.
               </p>
 
               <p id="cv">
                 <a href="/pdfs/resume.pdf" target="_blank" rel="noreferrer">
-                  Download resume
+                  Download resume(7,4KB)
                 </a>
               </p>
             </>
           ) : (
             <>
               <p>
-                I’m looking for a frontend or software engineering role where I can ship
-                polished UI, integrate APIs, and keep improving performance, accessibility,
-                and developer experience. I’m especially excited about products that use AI
-                in practical, user-first ways.
+                I'm looking for a role where I can keep doing both things: building with AI and helping teams use it well. Whether that's an AI engineer role, an enablement lead position, or something that blends the two, I'm drawn to products where the technology is genuinely useful and the people behind it care about how it gets used.
+
+
               </p>
             </>
           )}
