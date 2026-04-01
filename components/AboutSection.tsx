@@ -47,7 +47,7 @@ export default function AboutSection() {
 
               <p id="cv">
                 <a href="/pdfs/resume.pdf" target="_blank" rel="noreferrer">
-                  Download resume(7,4KB)
+                  Download resume(5,14KB)
                 </a>
               </p>
             </>
